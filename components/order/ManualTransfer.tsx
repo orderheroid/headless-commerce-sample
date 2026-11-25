@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { confirmTransferAction } from '@/app/pesanan/[ref]/actions'
+import { confirmTransferAction } from '@/app/orders/[ref]/actions'
 import { orderStatusConfig } from '@/config/site'
 import { Button, CopyButton, Field, Notice } from '@/components/ui'
 import { rupiah } from '@/lib/format'

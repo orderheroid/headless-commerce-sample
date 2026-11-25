@@ -15,7 +15,7 @@ export function SiteFooter({ storeName }: { storeName: string }) {
           <Link href="/" className="hover:text-fg">
             Products
           </Link>
-          <Link href="/#cara-beli" className="hover:text-fg">
+          <Link href="/#how-to-buy" className="hover:text-fg">
             How to buy
           </Link>
           <Link href="/checkout" className="hover:text-fg">

@@ -56,7 +56,7 @@ export default async function ProductPage({ params }: Props) {
           {product.descriptionHtml && (
             <section className="border-t border-line pt-6">
               <h2 className="mb-3 font-display text-2xl">About this product</h2>
-              <div className="prose-toko text-fg-muted" dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+              <div className="prose-store text-fg-muted" dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
             </section>
           )}
         </div>

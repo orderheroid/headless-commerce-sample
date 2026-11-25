@@ -17,7 +17,7 @@ Read `README.md` for the folder structure and how to change the look.
 5. **Buyer data never goes to the browser.** Order data only leaves through `toPublicStatus` in
    `lib/order-public.ts` (allowlist). Adding a field means adding it there and in its test.
 6. **No database, no file storage, no webhooks, no mocks.** Status is read by polling through
-   `app/api/pesanan/[ref]/route.ts`.
+   `app/api/orders/[ref]/route.ts`.
 7. **The API has no test mode.** Do not create orders, payment codes, or transfer confirmations while
    testing without the store owner's permission. Safe to call: `GET /meta`, catalog, payment methods,
    `GET /orders/{ref}`, and `POST /checkout/quote`.

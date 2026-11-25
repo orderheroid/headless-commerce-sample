@@ -34,7 +34,7 @@ export default async function HomePage() {
 
       <FeaturedProducts products={featured} />
 
-      <section id="produk" className="scroll-mt-20" aria-label={site.home.catalogTitle}>
+      <section id="products" className="scroll-mt-20" aria-label={site.home.catalogTitle}>
         <SectionHeader title={site.home.catalogTitle} />
         {products.length === 0 ? <Notice tone="neutral">There are no products for sale right now.</Notice> : <CatalogBrowser products={products} />}
       </section>

@@ -21,7 +21,7 @@ export function QuickAdd({ product }: { product: ProductSummary }) {
 
   if (needsDetail) {
     return (
-      <Link href={`/produk/${encodeURIComponent(product.slug)}`} aria-label={`View ${product.name}`} className={cn(base, 'border border-line-strong text-fg hover:border-fg')}>
+      <Link href={`/products/${encodeURIComponent(product.slug)}`} aria-label={`View ${product.name}`} className={cn(base, 'border border-line-strong text-fg hover:border-fg')}>
         <Icon name="arrow-up-right" className="h-[18px] w-[18px]" />
       </Link>
     )

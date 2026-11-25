@@ -91,7 +91,7 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
       if (result.ok) {
         clearCart()
         attempt.finish()
-        router.push(`/pesanan/${result.reference}`) // payment code is shown on the status page
+        router.push(`/orders/${result.reference}`) // payment code is shown on the status page
         return // button stays "processing" until the page navigates
       }
 

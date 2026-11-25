@@ -30,11 +30,11 @@ export function HomeHero({ storeName, showcase, productCount }: { storeName: str
         <p className="mt-5 max-w-md text-base leading-relaxed text-fg-muted sm:text-lg">{site.home.subtitle}</p>
 
         <div className="mt-7 flex flex-wrap items-center gap-3">
-          <ButtonLink href="#produk" size="lg">
+          <ButtonLink href="#products" size="lg">
             {site.home.primaryCta}
             <Icon name="arrow-right" className="h-4 w-4" />
           </ButtonLink>
-          <ButtonLink href="#cara-beli" size="lg" variant="secondary">
+          <ButtonLink href="#how-to-buy" size="lg" variant="secondary">
             {site.home.secondaryCta}
           </ButtonLink>
         </div>
@@ -46,7 +46,7 @@ export function HomeHero({ storeName, showcase, productCount }: { storeName: str
           {covers.map((p, i) => (
             <Link
               key={p.id}
-              href={`/produk/${encodeURIComponent(p.slug)}`}
+              href={`/products/${encodeURIComponent(p.slug)}`}
               tabIndex={-1}
               className={cn('w-[34%] max-w-52 transition duration-300 hover:z-20 hover:-translate-y-3 hover:rotate-0', FAN[i])}
             >

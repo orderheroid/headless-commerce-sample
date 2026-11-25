@@ -3,7 +3,7 @@
 
 export type Theme = 'light' | 'dark'
 
-export const THEME_STORAGE_KEY = 'toko:tema'
+export const THEME_STORAGE_KEY = 'store:theme'
 
 /** Mobile browser bar color per theme (meta theme-color). */
 export const THEME_COLOR: Record<Theme, string> = { light: '#ffffff', dark: '#0b0c0f' }

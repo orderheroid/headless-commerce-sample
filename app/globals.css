@@ -212,41 +212,41 @@ body {
 }
 
 /* Product description (sanitized merchant HTML). */
-.prose-toko {
+.prose-store {
   line-height: 1.75;
   overflow-wrap: anywhere;
 }
-.prose-toko > * + * {
+.prose-store > * + * {
   margin-top: 0.9em;
 }
-.prose-toko ul {
+.prose-store ul {
   list-style: disc;
   padding-left: 1.25em;
 }
-.prose-toko ol {
+.prose-store ol {
   list-style: decimal;
   padding-left: 1.25em;
 }
-.prose-toko li + li {
+.prose-store li + li {
   margin-top: 0.3em;
 }
-.prose-toko h2,
-.prose-toko h3,
-.prose-toko h4 {
+.prose-store h2,
+.prose-store h3,
+.prose-store h4 {
   margin-top: 1.4em;
   font-weight: 600;
   color: var(--fg);
 }
-.prose-toko a {
+.prose-store a {
   color: var(--accent);
   text-decoration: underline;
 }
-.prose-toko img {
+.prose-store img {
   max-width: 100%;
   height: auto;
   border-radius: 0.75rem;
 }
-.prose-toko blockquote {
+.prose-store blockquote {
   border-left: 3px solid var(--accent-line);
   padding-left: 1em;
   color: var(--fg-muted);

@@ -50,10 +50,10 @@ Requires Node 20.9 or newer.
 ```
 app/                      routes (thin: fetch data, compose components)
   page.tsx                home page + catalog (cached for 300 seconds)
-  produk/[slug]/          product detail
+  products/[slug]/        product detail
   checkout/               page + server actions (quote, create order)
-  pesanan/[ref]/          order status + server action (new payment code)
-  api/pesanan/[ref]/      status route polled by the browser
+  orders/[ref]/           order status + server action (new payment code)
+  api/orders/[ref]/       status route polled by the browser
 components/
   ui/                     base components (Button, Card, Field, ChoiceList, …)
   layout/                 header, footer, theme, cart pill
@@ -68,8 +68,6 @@ lib/
   validation.ts           buyer validation (used by browser and server)
 ```
 
-Route paths are in Indonesian (`/produk` = product, `/pesanan` = order); rename the folders under `app/` to change them.
-
 ## Rules this code enforces
 
 - The secret key is read only in `lib/orderhero.ts`; it never reaches the browser bundle.
@@ -77,7 +75,7 @@ Route paths are in Indonesian (`/produk` = product, `/pesanan` = order); rename 
 - Payment methods come from `GET /checkout/payment-methods`, with labels and order as returned.
 - One checkout attempt = one `Idempotency-Key` + one `external_reference` (sessionStorage);
   when the outcome is uncertain, the order is read back, not created again.
-- Payment codes (QRIS, VA, retail outlet) and manual transfer accounts are shown on `/pesanan/{ref}`; status is polled every 10 seconds.
+- Payment codes (QRIS, VA, retail outlet) and manual transfer accounts are shown on `/orders/{ref}`; status is polled every 10 seconds.
 - Proof of transfer is forwarded straight to OrderHero; this store does not keep any files.
 - The status route only sends the fields in `lib/order-public.ts`; buyer data never reaches the browser.
 - The store address for `status_url` comes from env/Vercel, not from request headers.

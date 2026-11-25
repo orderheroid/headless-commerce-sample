@@ -11,7 +11,7 @@ type Fetched = { kind: 'ok'; order: PublicOrderStatus } | { kind: 'error'; messa
 /** Read the status through this store's own route handler, not directly from OrderHero. */
 async function fetchStatus(reference: string): Promise<Fetched> {
   try {
-    const res = await fetch(`/api/pesanan/${reference}`, { cache: 'no-store' })
+    const res = await fetch(`/api/orders/${reference}`, { cache: 'no-store' })
     const data = await res.json().catch(() => null)
     if (res.ok && data?.ok) return { kind: 'ok', order: data.order }
     return {

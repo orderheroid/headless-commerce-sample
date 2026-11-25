@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { changePaymentAction } from '@/app/pesanan/[ref]/actions'
+import { changePaymentAction } from '@/app/orders/[ref]/actions'
 import { newUuid } from '@/lib/format'
 import type { PublicOrderStatus } from '@/lib/types'
 

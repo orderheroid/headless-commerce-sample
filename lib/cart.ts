@@ -18,8 +18,8 @@ export type CartItem = {
   slug: string
 }
 
-const STORAGE_KEY = 'toko:keranjang:v1'
-const CHANGE_EVENT = 'toko:keranjang'
+const STORAGE_KEY = 'store:cart:v1'
+const CHANGE_EVENT = 'store:cart'
 const MAX_QTY = 100
 const EMPTY: CartItem[] = []
 

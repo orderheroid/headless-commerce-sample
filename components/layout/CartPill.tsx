@@ -9,9 +9,9 @@ import { cartCount, useCart } from '@/lib/cart'
 import { cn } from '@/lib/cn'
 
 /** Pages where the pill is hidden (they already have their own action bar at the bottom of the screen). */
-const HIDDEN_ON = ['/checkout', '/pesanan']
+const HIDDEN_ON = ['/checkout', '/orders']
 /** On these pages the pill only shows on wide screens (on mobile there is an "Add to cart" bar). */
-const DESKTOP_ONLY_ON = ['/produk']
+const DESKTOP_ONLY_ON = ['/products']
 
 /**
  * Floating cart pill: appears as soon as the cart has items, so checkout is always one tap away

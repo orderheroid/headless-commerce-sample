@@ -16,7 +16,7 @@ type Props = {
 
 /** Product card: thin frame, cover inside, text below, price and "+" button on one row. */
 export function ProductCard({ product, priority, rank }: Props) {
-  const href = `/produk/${encodeURIComponent(product.slug)}`
+  const href = `/products/${encodeURIComponent(product.slug)}`
   const discounted = product.comparePrice != null && product.comparePrice > product.price
 
   return (

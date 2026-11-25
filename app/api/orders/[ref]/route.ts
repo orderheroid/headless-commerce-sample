@@ -4,7 +4,7 @@ import { isUuid } from '@/lib/format'
 import { toPublicStatus } from '@/lib/order-public'
 import { OrderHeroError, getOrder, toFailure } from '@/lib/orderhero'
 
-// Called by the /pesanan/[ref] page every few seconds. The response body comes only from toPublicStatus
+// Called by the /orders/[ref] page every few seconds. The response body comes only from toPublicStatus
 // (order number, status, items, total, payment code, payment_page_url). Buyer data is never included.
 
 const NO_STORE = { 'Cache-Control': 'no-store' }

@@ -46,7 +46,7 @@ export function MethodSwitcher({ methods, current, allowSame, busy, onConfirm }:
     <div className="space-y-3 border-t border-line-soft pt-4">
       <p className="text-sm font-medium text-fg">Choose another method</p>
       <ChoiceList
-        name="ganti_metode"
+        name="change_method"
         label="Payment method"
         value={selected}
         onChange={setSelected}

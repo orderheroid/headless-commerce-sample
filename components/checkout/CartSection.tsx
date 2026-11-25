@@ -14,7 +14,7 @@ export function CartSection({ items, disabled, step }: { items: CartItem[]; disa
           <li key={`${item.productId}:${item.variantId}`} className="flex gap-3 py-3">
             <ProductImage src={item.image} name={item.name} alt="" className="h-16 w-16 shrink-0 rounded-xl" />
             <div className="min-w-0 flex-1">
-              <Link href={`/produk/${encodeURIComponent(item.slug)}`} className="line-clamp-2 text-sm font-medium text-fg hover:underline">
+              <Link href={`/products/${encodeURIComponent(item.slug)}`} className="line-clamp-2 text-sm font-medium text-fg hover:underline">
                 {item.name}
               </Link>
               {item.variantName && <p className="text-xs text-fg-subtle">{item.variantName}</p>}

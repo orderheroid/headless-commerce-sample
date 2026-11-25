@@ -6,11 +6,11 @@ import { newUuid } from '@/lib/format'
 
 // One "checkout attempt" = two UUIDs in sessionStorage:
 // - Idempotency-Key  : reused on every POST /orders retry
-// - external_reference: the order id in this store, also the ref of the /pesanan/{ref} page
+// - external_reference: the order id in this store, also the ref of the /orders/{ref} page
 // Both are replaced only after the order is created successfully.
 
-const IDEM_KEY = 'toko:checkout:idempotency-key'
-const REF_KEY = 'toko:checkout:external-reference'
+const IDEM_KEY = 'store:checkout:idempotency-key'
+const REF_KEY = 'store:checkout:external-reference'
 
 function readOrCreate(key: string): string {
   try {

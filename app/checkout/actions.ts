@@ -113,7 +113,7 @@ export async function createOrderAction(input: {
   let stockHold: boolean
   try {
     // Origin comes from env/Vercel, not from request headers (see lib/site-url.ts).
-    statusUrl = `${await siteOrigin()}/pesanan/${reference}`
+    statusUrl = `${await siteOrigin()}/orders/${reference}`
     stockHold = await holdsStock(items) // catalog is cached for 300 seconds
   } catch (err) {
     return toFailure(err) // misconfiguration: no order was created
