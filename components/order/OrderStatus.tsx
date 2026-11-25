@@ -13,7 +13,7 @@ import { PaymentPanel } from './PaymentPanel'
 import { StatusBanner, type StatusView } from './StatusBanner'
 import { useOrderPolling } from './useOrderPolling'
 
-/** Tentukan tampilan dari status API. Satu-satunya tempat aturan "lunas / dikirim / tertutup" untuk UI. */
+/** Derive the view from the API status. The only place for the UI's "paid / delivered / closed" rules. */
 function viewOf(order: PublicOrderStatus, now: number): StatusView {
   if (isPaid(order)) {
     switch (order.delivery_status) {
@@ -27,14 +27,14 @@ function viewOf(order: PublicOrderStatus, now: number): StatusView {
       case 'processing':
         return 'delivering'
       default: {
-        // Respons tanpa `delivery.status`: pakai digital_delivered + umur lunas.
+        // Response without `delivery.status`: use digital_delivered + time since paid.
         if (order.digital_delivered) return 'delivered'
         const paidAt = order.paid_at ? Date.parse(order.paid_at) : null
         return paidAt !== null && now - paidAt > orderStatusConfig.deliverySlowMs ? 'delivery_delayed' : 'delivering'
       }
     }
   }
-  // Cron menutup order setelah tenggat; sampai itu berjalan statusnya masih pending.
+  // A cron closes the order after the deadline; until it runs the status is still pending.
   if (isClosed(order) || isPastClosing(order, now)) return 'closed'
   return order.transfer?.status === 'pending' ? 'awaiting_verification' : 'awaiting_payment'
 }
@@ -57,17 +57,17 @@ export function OrderStatus({ reference, methods }: { reference: string; methods
     if (error) {
       return (
         <div className="mx-auto max-w-xl space-y-4">
-          <Notice title={error.notFound ? 'Pesanan tidak ditemukan' : undefined}>
-            {error.notFound ? 'Periksa kembali tautan yang kamu buka.' : error.message}
+          <Notice title={error.notFound ? 'Order not found' : undefined}>
+            {error.notFound ? 'Double-check the link you opened.' : error.message}
           </Notice>
           <ButtonLink href="/" variant="secondary">
-            Kembali ke toko
+            Back to store
           </ButtonLink>
         </div>
       )
     }
     return (
-      <div className="mx-auto max-w-xl space-y-4" aria-label="Memuat status pesanan">
+      <div className="mx-auto max-w-xl space-y-4" aria-label="Loading order status">
         <Skeleton className="h-44 rounded-2xl" />
         <Skeleton className="h-80 rounded-2xl" />
       </div>
@@ -83,7 +83,7 @@ export function OrderStatus({ reference, methods }: { reference: string; methods
       <Card className="space-y-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-sm text-fg-subtle">Nomor pesanan</p>
+            <p className="text-sm text-fg-subtle">Order number</p>
             <p className="truncate text-xl font-bold tracking-wide">{order.order_number ?? '—'}</p>
           </div>
           {order.order_number && <CopyButton value={order.order_number} />}
@@ -92,7 +92,7 @@ export function OrderStatus({ reference, methods }: { reference: string; methods
         <StatusBanner view={view} />
         {unpaid && stopped && (
           <Button variant="secondary" size="lg" block onClick={checkNow} disabled={checking}>
-            {checking ? 'Memeriksa…' : 'Saya sudah bayar, periksa status'}
+            {checking ? 'Checking…' : "I've paid, check status"}
           </Button>
         )}
         {error && <p className="text-sm text-danger">{error.message}</p>}
@@ -103,7 +103,7 @@ export function OrderStatus({ reference, methods }: { reference: string; methods
       <OrderItems order={order} />
 
       <ButtonLink href="/" variant="ghost" block>
-        Kembali ke toko
+        Back to store
       </ButtonLink>
     </div>
   )

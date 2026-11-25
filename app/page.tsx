@@ -10,17 +10,17 @@ import { getCatalog, pickFeatured, type ProductSummary } from '@/lib/catalog'
 import { toFailure } from '@/lib/orderhero'
 import { storeName } from '@/lib/store'
 
-// Katalog di-cache di server dan dibangun ulang paling cepat tiap 300 detik.
+// The catalog is cached on the server and rebuilt at most once every 300 seconds.
 export const revalidate = 300
 
-/** Beranda: susunan bagian diatur di sini; isi teksnya di config/site.ts. */
+/** Home page: section order is set here; the text content lives in config/site.ts. */
 export default async function HomePage() {
   const name = await storeName()
   let products: ProductSummary[]
   try {
     products = await getCatalog()
   } catch (err) {
-    return <Notice title="Katalog belum bisa dimuat">{toFailure(err).message}</Notice>
+    return <Notice title="The catalog could not be loaded">{toFailure(err).message}</Notice>
   }
 
   const featured = pickFeatured(products, site.home.featuredCount)
@@ -36,7 +36,7 @@ export default async function HomePage() {
 
       <section id="produk" className="scroll-mt-20" aria-label={site.home.catalogTitle}>
         <SectionHeader title={site.home.catalogTitle} />
-        {products.length === 0 ? <Notice tone="neutral">Belum ada produk yang dijual saat ini.</Notice> : <CatalogBrowser products={products} />}
+        {products.length === 0 ? <Notice tone="neutral">There are no products for sale right now.</Notice> : <CatalogBrowser products={products} />}
       </section>
 
       <HowToBuy />

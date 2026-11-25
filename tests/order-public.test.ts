@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { toPublicStatus } from '@/lib/order-public'
 import type { OrderResult } from '@/lib/types'
 
-/** Respons API lengkap, termasuk data pembeli yang TIDAK boleh sampai ke browser. */
+/** Full API response, including buyer data that must NOT reach the browser. */
 function apiResult(overrides: Record<string, unknown> = {}): OrderResult {
   return {
     order: {
@@ -27,19 +27,19 @@ function apiResult(overrides: Record<string, unknown> = {}): OrderResult {
 }
 
 describe('toPublicStatus', () => {
-  it('tidak pernah meneruskan data pembeli', () => {
+  it('never passes on buyer data', () => {
     const json = JSON.stringify(toPublicStatus(apiResult()))
     for (const secret of ['Budi Rahasia', 'budi@rahasia.com', '6281200000000', 'Jl. Rahasia', 'customer']) expect(json).not.toContain(secret)
   })
-  it('hanya berisi field yang diizinkan', () => {
+  it('contains only the allowed fields', () => {
     expect(Object.keys(toPublicStatus(apiResult())).sort()).toEqual(
       ['closes_at', 'delivery_status', 'digital_delivered', 'items', 'order_number', 'paid_at', 'payment', 'payment_method', 'payment_page_url', 'payment_status', 'status', 'total', 'transfer', 'unique_code'].sort(),
     )
   })
-  it('menyembunyikan payment_url gateway bila ada QR atau kode', () => {
+  it('hides the gateway payment_url when there is a QR or code', () => {
     expect(toPublicStatus(apiResult()).payment?.payment_url).toBeNull()
   })
-  it('konfirmasi transfer: hanya status dan alasan, tanpa nama pengirim atau bukti', () => {
+  it('transfer confirmation: only status and reason, without sender name or proof', () => {
     const result = {
       ...apiResult({ payment_method: 'm_abc', amounts: { currency: 'IDR', total: 50123, unique_code: 123 } }),
       payment: null,
@@ -51,12 +51,12 @@ describe('toPublicStatus', () => {
     expect(out.total).toBe(50123)
     expect(JSON.stringify(out)).not.toMatch(/Budi Rahasia|bukti\.jpg/)
   })
-  it('tanpa konfirmasi transfer: transfer null dan kode unik 0', () => {
+  it('without transfer confirmation: transfer is null and unique code is 0', () => {
     const out = toPublicStatus(apiResult())
     expect(out.transfer).toBeNull()
     expect(out.unique_code).toBe(0)
   })
-  it('menyembunyikan instruksi bayar setelah lunas atau ditutup', () => {
+  it('hides payment instructions once paid or closed', () => {
     for (const o of [{ payment_status: 'paid' }, { status: 'cancelled' }]) {
       const out = toPublicStatus(apiResult(o))
       expect(out.payment).toBeNull()

@@ -4,7 +4,7 @@ import type { ProductSummary } from '@/lib/catalog'
 
 import { SectionHeader } from './SectionHeader'
 
-/** Rak unggulan: geser horizontal dengan snap, di semua ukuran layar. */
+/** Featured shelf: horizontal scroll with snap, on all screen sizes. */
 export function FeaturedProducts({ products }: { products: ProductSummary[] }) {
   if (products.length === 0) return null
   return (

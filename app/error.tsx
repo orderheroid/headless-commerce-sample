@@ -2,16 +2,16 @@
 
 import { Button, ButtonLink } from '@/components/ui'
 
-/** Batas galat halaman: kesalahan tak terduga tidak menampilkan layar putih. */
+/** Page error boundary: unexpected errors do not show a blank screen. */
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="mx-auto max-w-md py-16 text-center">
-      <h1 className="font-display text-4xl tracking-tight">Ada yang tidak beres</h1>
-      <p className="mt-2 text-fg-muted">Halaman ini gagal dimuat. Coba lagi sebentar lagi.</p>
+      <h1 className="font-display text-4xl tracking-tight">Something went wrong</h1>
+      <p className="mt-2 text-fg-muted">This page failed to load. Try again in a moment.</p>
       <div className="mt-6 flex justify-center gap-2">
-        <Button onClick={reset}>Coba lagi</Button>
+        <Button onClick={reset}>Try again</Button>
         <ButtonLink href="/" variant="secondary">
-          Ke beranda
+          Go to home page
         </ButtonLink>
       </div>
     </div>

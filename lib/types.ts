@@ -1,5 +1,5 @@
-// Tipe mengikuti OpenAPI OrderHero v1 (https://api.orderhero.id/v1/openapi.json).
-// Hanya field yang dipakai toko ini yang ditulis.
+// Types follow the OrderHero v1 OpenAPI (https://api.orderhero.id/v1/openapi.json).
+// Only the fields this store uses are written out.
 
 export type Variant = {
   id: string | null
@@ -36,7 +36,7 @@ export type Product = {
   variants: Variant[]
   meta_title: string | null
   meta_description: string | null
-  /** Tidak null = harga ditentukan pembeli; tidak bisa lewat API, arahkan ke `checkout_url`. */
+  /** Not null = the buyer sets the price; not possible through the API, send them to `checkout_url`. */
   pay_what_you_want?: { min_price: number; suggested_price: number | null } | null
   checkout_url: string | null
 }
@@ -52,7 +52,7 @@ export type PaymentMethod = {
   min_amount: number | null
   expiry_minutes: number | null
   is_default: boolean
-  /** Hanya metode transfer manual (kategori MANUAL_TRANSFER). */
+  /** Manual transfer methods only (category MANUAL_TRANSFER). */
   bank_name?: string
   account_number?: string
   account_holder_name?: string
@@ -104,21 +104,21 @@ export type Order = {
   payment_status: string
   payment_method: string | null
   items: OrderItem[]
-  /** `total` sudah termasuk `unique_code` (kode unik transfer manual). */
+  /** `total` already includes `unique_code` (the manual transfer unique code). */
   amounts: { currency: string; total: number; unique_code?: number }
   digital_delivered?: boolean
   digital_delivered_at?: string | null
   delivery?: { status: DeliveryStatus } | null
   paid_at?: string | null
   created_at?: string | null
-  /** Tenggat order (created_at + 24 jam); `null` untuk order gratis dan order lama. */
+  /** Order deadline (created_at + 24 hours); `null` for free orders and legacy orders. */
   expires_at?: string | null
-  // `customer` sengaja tidak diberi tipe: data pembeli tidak pernah dipakai atau diteruskan.
+  // `customer` is deliberately left untyped: buyer data is never used or passed on.
 }
 
 /**
- * `processing` = lunas, biasanya selesai dalam hitungan detik; `delayed` = lunas tapi belum terkirim
- * setelah 15 menit (dicoba ulang otomatis; toko mungkin perlu turun tangan).
+ * `processing` = paid, usually done within seconds; `delayed` = paid but not yet delivered
+ * after 15 minutes (retried automatically; the store may need to step in).
  */
 export type DeliveryStatus = 'not_applicable' | 'pending' | 'processing' | 'delayed' | 'delivered'
 
@@ -132,7 +132,7 @@ export type Payment = {
   expires_at: string | null
 }
 
-/** Konfirmasi "saya sudah transfer" dari pembeli; diverifikasi merchant di dashboard. */
+/** The buyer's "I've made the transfer" confirmation; verified by the merchant in the dashboard. */
 export type TransferConfirmation = {
   status: 'pending' | 'verified' | 'rejected'
   rejection_reason: string | null
@@ -146,7 +146,7 @@ export type OrderResult = {
   payment_error?: { error: string; message: string } | null
 }
 
-// ---- Bentuk yang dikirim browser ke server milik project ini ----
+// ---- Shapes the browser sends to this project's own server ----
 
 export type CartLine = {
   product_id: string
@@ -158,7 +158,7 @@ export type Failure = {
   ok: false
   code: string
   message: string
-  /** detik, dari header Retry-After */
+  /** seconds, from the Retry-After header */
   retryAfter?: number
 }
 
@@ -168,21 +168,21 @@ export type CreateOrderResult =
   | { ok: true; reference: string }
   | (Failure & { rotateIdempotencyKey?: boolean })
 
-/** Kode bayar yang boleh sampai ke browser. Tidak memuat data pembeli. */
+/** Payment code that may reach the browser. Contains no buyer data. */
 export type PublicPayment = {
   method_code: string | null
   status: string
   amount: number
-  /** QRIS: dirender jadi QR di browser */
+  /** QRIS: rendered as a QR in the browser */
   qris_payload: string | null
-  /** VA: nomor rekening virtual; retail: kode bayar gerai */
+  /** VA: virtual account number; retail: retail outlet payment code */
   virtual_account: string | null
-  /** Hanya bila tidak ada QR maupun kode (mis. e-wallet): tautan ke halaman penyedia */
+  /** Only when there is neither a QR nor a code (e.g. e-wallet): link to the provider's page */
   payment_url: string | null
   expires_at: string | null
 }
 
-/** Satu-satunya data order yang boleh sampai ke browser. */
+/** The only order data that may reach the browser. */
 export type PublicOrderStatus = {
   order_number: string | null
   status: string
@@ -191,18 +191,18 @@ export type PublicOrderStatus = {
   items: { name: string; variant: string | null; quantity: number; subtotal: number }[]
   total: number
   payment: PublicPayment | null
-  /** Halaman bayar OrderHero, cadangan bila kode bayar tidak bisa ditampilkan di toko ini */
+  /** OrderHero payment page, fallback when the payment code cannot be shown in this store */
   payment_page_url: string | null
-  /** Kapan OrderHero menutup order yang belum dibayar (ISO). */
+  /** When OrderHero closes the unpaid order (ISO). */
   closes_at: string | null
   paid_at: string | null
-  /** Produk digital sudah dikirim ke email/WA pembeli */
+  /** Digital product has been sent to the buyer's email/WA */
   digital_delivered: boolean
-  /** Dari `order.delivery.status`; null bila API belum mengirimnya */
+  /** From `order.delivery.status`; null if the API does not send it yet */
   delivery_status: DeliveryStatus | null
-  /** Kode unik transfer manual yang sudah termasuk di `total` (0 bila tidak ada). */
+  /** Manual transfer unique code already included in `total` (0 if none). */
   unique_code: number
-  /** Status konfirmasi transfer manual; tanpa nama pengirim maupun bukti (itu data pembeli). */
+  /** Manual transfer confirmation status; without the sender name or proof (that is buyer data). */
   transfer: { status: TransferConfirmation['status']; rejection_reason: string | null } | null
 }
 

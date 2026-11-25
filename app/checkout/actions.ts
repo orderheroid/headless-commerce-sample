@@ -9,12 +9,12 @@ import { siteOrigin } from '@/lib/site-url'
 import type { CartLine, CreateOrderResult, Failure, OrderResult, QuoteResult } from '@/lib/types'
 import { cleanBuyer, validateBuyer } from '@/lib/validation'
 
-// Server action dipanggil dari browser, jadi semua input diperiksa ulang di sini.
-// Tidak ada field harga yang diterima maupun dikirim ke API.
+// Server actions are called from the browser, so all input is re-validated here.
+// No price field is accepted or sent to the API.
 
 const fail = (code: string, message = buyerMessage(code)): Failure => ({ ok: false, code, message })
 
-// ---------------------------------------------------------------- pembersih input
+// ---------------------------------------------------------------- input sanitizers
 
 function cleanItems(input: unknown): CartLine[] | null {
   if (!Array.isArray(input) || input.length === 0 || input.length > 50) return null
@@ -49,7 +49,7 @@ export async function quoteAction(input: { items: unknown; paymentMethod?: unkno
       items,
       payment_method: cleanCode(input.paymentMethod),
       coupon_code: cleanCode(input.couponCode),
-      // Batas 60 quote/menit per IP pembeli, supaya satu pengunjung tidak menghabiskan kuota quote toko.
+      // Limit of 60 quotes/minute per buyer IP, so one visitor cannot use up the store's quote quota.
       ...(client_ip ? { tracking: { client_ip } } : {}),
     })
     return { ok: true, quote }
@@ -60,22 +60,22 @@ export async function quoteAction(input: { items: unknown; paymentMethod?: unkno
 
 // ---------------------------------------------------------------- order
 
-/** True bila ada produk di keranjang yang stoknya dihitung (stok di-reserve saat order dibuat). */
+/** True if any product in the cart has tracked stock (stock is reserved when the order is created). */
 async function holdsStock(items: CartLine[]): Promise<boolean> {
   const products = await Promise.all(items.map((i) => getProduct(i.product_id).catch(() => null)))
   return products.some((p) => p?.track_inventory === true)
 }
 
-/** Pesan 429 untuk pembuatan order: ada batas per email/telepon dan per IP pembeli. */
+/** 429 message for order creation: there are limits per email/phone and per buyer IP. */
 function orderRateLimited(err: OrderHeroError): Failure {
   const minutes = err.retryAfter ? Math.max(1, Math.ceil(err.retryAfter / 60)) : null
   return {
-    ...fail('RATE_LIMITED', `Terlalu banyak percobaan pesanan dari kontak atau jaringan ini. Coba lagi ${minutes ? `dalam ${minutes} menit` : 'beberapa saat lagi'}.`),
+    ...fail('RATE_LIMITED', `Too many order attempts from this contact or network. Try again ${minutes ? `in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : 'in a moment'}.`),
     ...(err.retryAfter ? { retryAfter: err.retryAfter } : {}),
   }
 }
 
-/** Order yang mungkin sudah ada untuk external_reference ini; null bila memang belum ada. */
+/** The order that may already exist for this external_reference; null if there really is none yet. */
 async function findExisting(reference: string): Promise<OrderResult | null> {
   try {
     return await getOrder(reference)
@@ -104,7 +104,7 @@ export async function createOrderAction(input: {
   const customer = cleanBuyer(raw)
   if (!customer) {
     const [, message] = Object.entries(validateBuyer(raw))[0] ?? []
-    return fail('INVALID_CUSTOMER', message ?? 'Periksa lagi data pembeli.')
+    return fail('INVALID_CUSTOMER', message ?? 'Please check the buyer details again.')
   }
   const paymentMethod = cleanCode(input.paymentMethod)
   if (!paymentMethod) return fail('PAYMENT_METHOD_REQUIRED')
@@ -112,11 +112,11 @@ export async function createOrderAction(input: {
   let statusUrl: string
   let stockHold: boolean
   try {
-    // Origin dari env/Vercel, bukan dari header permintaan (lihat lib/site-url.ts).
+    // Origin comes from env/Vercel, not from request headers (see lib/site-url.ts).
     statusUrl = `${await siteOrigin()}/pesanan/${reference}`
-    stockHold = await holdsStock(items) // katalog di-cache 300 detik
+    stockHold = await holdsStock(items) // catalog is cached for 300 seconds
   } catch (err) {
-    return toFailure(err) // salah konfigurasi: tidak ada order yang dibuat
+    return toFailure(err) // misconfiguration: no order was created
   }
 
   try {
@@ -127,14 +127,14 @@ export async function createOrderAction(input: {
         payment_method: paymentMethod,
         ...(cleanCode(input.couponCode) ? { coupon_code: cleanCode(input.couponCode) } : {}),
         external_reference: reference,
-        // Cadangan bila pembeli membayar lewat halaman OrderHero: kembali ke halaman status toko.
+        // Fallback if the buyer pays through the OrderHero page: return to the store's status page.
         return_url: statusUrl,
-        // Tautan bayar di WA/email "pesanan diterima" dan pengingat bayar mengarah ke halaman status toko.
+        // The payment link in the "order received" WA/email and in payment reminders points to the store's status page.
         status_url: statusUrl,
-        // IP pembeli: dasar batas per IP OrderHero untuk kunci secret, dan pencocokan pixel iklan.
+        // Buyer IP: the basis for OrderHero's per-IP limit for secret keys, and for ad pixel matching.
         tracking: await buyerTracking(),
-        // Produk berstok: order belum dibayar ditutup lebih cepat dan stoknya kembali.
-        // Produk tanpa stok: bawaan 24 jam, supaya pembeli VA/gerai punya cukup waktu.
+        // Stock-tracked products: unpaid orders are closed sooner and their stock is released.
+        // Products without stock: default of 24 hours, so VA/retail outlet buyers have enough time.
         ...(stockHold ? { expires_in_minutes: checkoutConfig.stockHoldMinutes } : {}),
       },
       input.idempotencyKey,
@@ -143,7 +143,7 @@ export async function createOrderAction(input: {
   } catch (err) {
     if (!(err instanceof OrderHeroError)) return toFailure(err)
 
-    // Order mungkin sudah dibuat: baca yang ada lewat external_reference, jangan buat baru.
+    // The order may already have been created: read the existing one via external_reference, do not create a new one.
     if (['DUPLICATE_REFERENCE', 'IDEMPOTENCY_OUTCOME_UNKNOWN', 'IDEMPOTENCY_KEY_REUSED'].includes(err.code)) {
       let existing: OrderResult | null
       try {
@@ -154,11 +154,11 @@ export async function createOrderAction(input: {
       if (existing) return { ok: true, reference }
 
       if (err.code === 'DUPLICATE_REFERENCE') {
-        // Referensi terpakai tetapi ordernya tidak terbaca: jangan dicoba lagi dengan referensi ini.
-        return fail(err.code, 'Pesananmu sedang diproses. Muat ulang halaman ini beberapa saat lagi.')
+        // The reference is taken but its order cannot be read: do not retry with this reference.
+        return fail(err.code, 'Your order is being processed. Reload this page in a moment.')
       }
-      // Order dengan referensi ini memang belum ada. external_reference tetap sama dan dijaga unik
-      // oleh OrderHero, jadi mengganti Idempotency-Key saja tidak bisa menghasilkan order kedua.
+      // No order with this reference exists yet. external_reference stays the same and is kept unique
+      // by OrderHero, so changing only the Idempotency-Key cannot produce a second order.
       return { ...toFailure(err), rotateIdempotencyKey: true }
     }
     if (err.code === 'RATE_LIMITED') return orderRateLimited(err)

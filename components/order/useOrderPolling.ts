@@ -8,7 +8,7 @@ import type { PublicOrderStatus } from '@/lib/types'
 
 type Fetched = { kind: 'ok'; order: PublicOrderStatus } | { kind: 'error'; message: string; notFound: boolean; retryAfter?: number }
 
-/** Baca status lewat route handler milik toko ini, bukan langsung ke OrderHero. */
+/** Read the status through this store's own route handler, not directly from OrderHero. */
 async function fetchStatus(reference: string): Promise<Fetched> {
   try {
     const res = await fetch(`/api/pesanan/${reference}`, { cache: 'no-store' })
@@ -16,26 +16,26 @@ async function fetchStatus(reference: string): Promise<Fetched> {
     if (res.ok && data?.ok) return { kind: 'ok', order: data.order }
     return {
       kind: 'error',
-      message: data?.message ?? 'Status pesanan belum bisa dimuat.',
+      message: data?.message ?? 'The order status could not be loaded yet.',
       notFound: res.status === 404,
       retryAfter: Number(res.headers.get('retry-after')) || undefined,
     }
   } catch {
-    return { kind: 'error', message: 'Koneksi terputus. Kami akan mencoba lagi.', notFound: false }
+    return { kind: 'error', message: 'Connection lost. We will try again.', notFound: false }
   }
 }
 
-/** Order selesai dipantau: lunas, tertutup, atau sudah lewat tenggat + masa tenggang. */
+/** Order no longer needs watching: paid, closed, or past the deadline + grace period. */
 function isFinal(order: PublicOrderStatus): boolean {
   return isPaid(order) || isClosed(order) || isPastClosing(order, Date.now() - orderStatusConfig.graceAfterCloseMs)
 }
 
-/** Order yang baru dibuat bisa belum terbaca sesaat; dianggap tidak ada setelah sekian kali 404. */
+/** A freshly created order may be unreadable for a moment; treated as missing after this many 404s. */
 const MAX_NOT_FOUND = 3
 
 /**
- * Polling status pesanan tiap `pollMs`. Berhenti saat lunas/tertutup, jeda saat tab tidak terlihat,
- * menghormati Retry-After, dan diganti tombol manual setelah `maxPollMs`.
+ * Polls the order status every `pollMs`. Stops when paid/closed, pauses while the tab is hidden,
+ * honors Retry-After, and is replaced by a manual button after `maxPollMs`.
  */
 export function useOrderPolling(reference: string) {
   const [order, setOrder] = useState<PublicOrderStatus | null>(null)
@@ -44,7 +44,7 @@ export function useOrderPolling(reference: string) {
   const [checking, setChecking] = useState(false)
   const done = useRef(false)
 
-  /** Terapkan status baru (dari polling atau dari aksi ganti metode). */
+  /** Apply a new status (from polling or from the change-method action). */
   const update = useCallback((next: PublicOrderStatus) => {
     setOrder(next)
     setError(null)
@@ -81,7 +81,7 @@ export function useOrderPolling(reference: string) {
           done.current = true
           return
         }
-        if (result.retryAfter) delay = Math.max(delay, result.retryAfter * 1000) // hormati Retry-After
+        if (result.retryAfter) delay = Math.max(delay, result.retryAfter * 1000) // honor Retry-After
       }
 
       if (!withinWindow()) {
@@ -91,7 +91,7 @@ export function useOrderPolling(reference: string) {
       if (!document.hidden) timer = setTimeout(poll, delay)
     }
 
-    // Jeda saat tab tidak aktif; lanjut lagi saat dibuka.
+    // Pause while the tab is inactive; resume when it is opened again.
     const onVisibility = () => {
       if (document.hidden) clearTimeout(timer)
       else if (withinWindow()) poll()
@@ -106,7 +106,7 @@ export function useOrderPolling(reference: string) {
     }
   }, [reference, update])
 
-  /** Periksa sekali secara manual (setelah polling otomatis berhenti). */
+  /** Check once manually (after automatic polling has stopped). */
   const checkNow = useCallback(async () => {
     setChecking(true)
     const result = await fetchStatus(reference)

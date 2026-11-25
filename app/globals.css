@@ -2,23 +2,23 @@
 
 /*
  * =============================================================================
- * TEMA TOKO
- * - Warna utama (tombol, tautan): skala --color-brand-* di @theme.
- * - Warna terang/gelap: variabel di :root (terang) dan [data-theme='dark'] (gelap) di bawah.
- *   Komponen hanya memakai nama semantik: bg-canvas, bg-surface, border-line, text-fg, text-accent, dst.
- * - Font: app/layout.tsx (variabel --font-body).
+ * STORE THEME
+ * - Primary color (buttons, links): the --color-brand-* scale in @theme.
+ * - Light/dark colors: variables in :root (light) and [data-theme='dark'] (dark) below.
+ *   Components only use semantic names: bg-canvas, bg-surface, border-line, text-fg, text-accent, etc.
+ * - Font: app/layout.tsx (the --font-body variable).
  * =============================================================================
  */
 
-/* Varian `dark:` mengikuti atribut data-theme (diatur ThemeToggle), bukan media query. */
+/* The `dark:` variant follows the data-theme attribute (set by ThemeToggle), not a media query. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 @theme {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  /* Huruf judul. Dipakai lewat class font-display; bawaan sama dengan isi (lihat app/layout.tsx). */
+  /* Heading font. Used via class font-display; defaults to the body font (see app/layout.tsx). */
   --font-display: var(--font-heading, var(--font-body)), ui-sans-serif, system-ui, sans-serif;
 
-  /* Biru utama toko. */
+  /* The store's primary blue. */
   --color-brand-50: #eef2ff;
   --color-brand-100: #dfe6ff;
   --color-brand-200: #c2cfff;
@@ -30,10 +30,10 @@
   --color-brand-800: #1d369f;
   --color-brand-900: #182b7a;
 
-  /* Aksen "stabilo" untuk penekanan kecil (garis bawah judul, label). */
+  /* "Highlighter" accent for small emphasis (heading underlines, labels). */
   --color-pop: #ffd84d;
 
-  /* Animasi dipakai lewat class animate-fade-in, animate-fade-up, animate-shimmer. */
+  /* Animations are used via classes animate-fade-in, animate-fade-up, animate-shimmer. */
   --animate-fade-in: fade-in 300ms ease-out both;
   --animate-fade-up: fade-up 400ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-shimmer: shimmer 1.4s linear infinite;
@@ -59,23 +59,23 @@
   }
 }
 
-/* Nama semantik → variabel yang berganti menurut tema. */
+/* Semantic names → variables that switch with the theme. */
 @theme inline {
-  --color-canvas: var(--canvas); /* latar halaman */
-  --color-surface: var(--surface); /* kartu, header, input */
-  --color-subtle: var(--subtle); /* permukaan redup (kotak info, hover ringan) */
-  --color-muted: var(--muted); /* hover, latar gambar */
-  --color-line: var(--line); /* garis kartu */
-  --color-line-soft: var(--line-soft); /* pemisah di dalam kartu */
-  --color-line-strong: var(--line-strong); /* garis input dan tombol sekunder */
-  --color-fg: var(--fg); /* teks utama */
-  --color-fg-muted: var(--fg-muted); /* teks sekunder */
-  --color-fg-subtle: var(--fg-subtle); /* keterangan */
-  --color-fg-faint: var(--fg-faint); /* placeholder, nonaktif */
+  --color-canvas: var(--canvas); /* page background */
+  --color-surface: var(--surface); /* cards, header, inputs */
+  --color-subtle: var(--subtle); /* dim surface (info boxes, light hover) */
+  --color-muted: var(--muted); /* hover, image background */
+  --color-line: var(--line); /* card borders */
+  --color-line-soft: var(--line-soft); /* dividers inside cards */
+  --color-line-strong: var(--line-strong); /* input and secondary button borders */
+  --color-fg: var(--fg); /* primary text */
+  --color-fg-muted: var(--fg-muted); /* secondary text */
+  --color-fg-subtle: var(--fg-subtle); /* captions */
+  --color-fg-faint: var(--fg-faint); /* placeholder, disabled */
 
-  --color-accent: var(--accent); /* tautan dan angka penting */
+  --color-accent: var(--accent); /* links and key figures */
   --color-accent-strong: var(--accent-strong);
-  --color-accent-soft: var(--accent-soft); /* latar pilihan terpilih, info */
+  --color-accent-soft: var(--accent-soft); /* selected option background, info */
   --color-accent-line: var(--accent-line);
   --color-accent-faint: var(--accent-faint);
 
@@ -166,7 +166,7 @@ body {
   color: var(--fg);
 }
 
-/* Hormati pengaturan "kurangi gerakan" di perangkat pembeli. */
+/* Respect the "reduce motion" setting on the buyer's device. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -180,20 +180,20 @@ body {
   }
 }
 
-/* Latar shimmer untuk gambar yang sedang dimuat dan skeleton. */
+/* Shimmer background for loading images and skeletons. */
 .shimmer {
   background-image: linear-gradient(90deg, var(--shimmer-a) 0%, var(--shimmer-b) 50%, var(--shimmer-a) 100%);
   background-size: 200% 100%;
   animation: var(--animate-shimmer);
 }
 
-/* Gaya judul: tebal dan rapat. Ubah di sini bila memakai font judul lain (mis. serif: weight 400). */
+/* Heading style: bold and tight. Change it here when using another heading font (e.g. serif: weight 400). */
 .font-display {
   font-weight: 700;
   letter-spacing: -0.035em;
 }
 
-/* Baris geser horizontal tanpa scrollbar (rak produk, chip kategori). */
+/* Horizontal scroll row without a scrollbar (product shelves, category chips). */
 .scroll-row {
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -202,7 +202,7 @@ body {
   display: none;
 }
 
-/* Garis bawah stabilo di bawah kata yang ditekankan. */
+/* Highlighter underline beneath emphasized words. */
 .marker {
   font-style: normal;
   background-image: linear-gradient(transparent 62%, var(--color-pop) 62%, var(--color-pop) 92%, transparent 92%);
@@ -211,7 +211,7 @@ body {
   background-image: linear-gradient(transparent 62%, rgb(255 216 77 / 0.35) 62%, rgb(255 216 77 / 0.35) 92%, transparent 92%);
 }
 
-/* Deskripsi produk (HTML merchant yang sudah disanitasi). */
+/* Product description (sanitized merchant HTML). */
 .prose-toko {
   line-height: 1.75;
   overflow-wrap: anywhere;

@@ -2,7 +2,7 @@ import { site } from '@/config/site'
 import { Icon } from '@/components/ui'
 import { cn } from '@/lib/cn'
 
-/** Poin kepercayaan dari config/site.ts (dikirim otomatis, pembayaran aman, dll.). */
+/** Trust points from config/site.ts (automatic delivery, secure payment, etc.). */
 export function Assurances({ className }: { className?: string }) {
   return (
     <ul className={cn('grid gap-2 text-sm text-fg-muted', className)}>

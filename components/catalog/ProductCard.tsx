@@ -8,13 +8,13 @@ import { QuickAdd } from './QuickAdd'
 
 type Props = {
   product: ProductSummary
-  /** Gambar dimuat lebih dulu (kartu di bagian atas halaman). */
+  /** Image is loaded first (cards at the top of the page). */
   priority?: boolean
-  /** Nomor urut besar di sudut gambar (rak unggulan). */
+  /** Large rank number in the image corner (featured shelf). */
   rank?: number
 }
 
-/** Kartu produk: bingkai tipis, sampul di dalam, teks di bawah, harga dan tombol "+" sejajar. */
+/** Product card: thin frame, cover inside, text below, price and "+" button on one row. */
 export function ProductCard({ product, priority, rank }: Props) {
   const href = `/produk/${encodeURIComponent(product.slug)}`
   const discounted = product.comparePrice != null && product.comparePrice > product.price
@@ -30,9 +30,9 @@ export function ProductCard({ product, priority, rank }: Props) {
           className={cn('aspect-square transition duration-500 ease-out group-hover:scale-[1.04]', product.soldOut && 'opacity-60 grayscale')}
         />
         <span className="absolute left-2.5 top-2.5 flex flex-wrap gap-1">
-          {product.soldOut && <Badge tone="ink">Habis</Badge>}
-          {!product.soldOut && discounted && <Badge tone="pop">Diskon</Badge>}
-          {product.pwywMin !== null && <Badge tone="surface">Harga bebas</Badge>}
+          {product.soldOut && <Badge tone="ink">Sold out</Badge>}
+          {!product.soldOut && discounted && <Badge tone="pop">Sale</Badge>}
+          {product.pwywMin !== null && <Badge tone="surface">Pay what you want</Badge>}
         </span>
         {rank !== undefined && (
           <span className="absolute bottom-1 right-3 font-display text-6xl leading-none text-white [text-shadow:0_2px_12px_rgb(0_0_0/0.45)]">{String(rank).padStart(2, '0')}</span>
@@ -48,9 +48,9 @@ export function ProductCard({ product, priority, rank }: Props) {
         </h3>
         <div className="mt-auto flex items-end justify-between gap-2 pt-2.5">
           {product.pwywMin !== null ? (
-            <Price amount={product.pwywMin} prefix="mulai" />
+            <Price amount={product.pwywMin} prefix="from" />
           ) : (
-            <Price amount={product.price} compareAt={product.comparePrice} prefix={product.hasVariants ? 'mulai' : undefined} className="flex-col gap-0" />
+            <Price amount={product.price} compareAt={product.comparePrice} prefix={product.hasVariants ? 'from' : undefined} className="flex-col gap-0" />
           )}
           <QuickAdd product={product} />
         </div>

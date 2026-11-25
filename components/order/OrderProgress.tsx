@@ -4,16 +4,16 @@ import { cn } from '@/lib/cn'
 export type Stage = 'awaiting_payment' | 'delivering' | 'delivered'
 
 const STEPS = [
-  { key: 'created', label: 'Pesanan dibuat' },
-  { key: 'paid', label: 'Pembayaran' },
-  { key: 'delivered', label: 'Produk dikirim' },
+  { key: 'created', label: 'Order placed' },
+  { key: 'paid', label: 'Payment' },
+  { key: 'delivered', label: 'Product sent' },
 ] as const
 
-/** Langkah 1–3. `stage` menentukan langkah mana yang selesai dan mana yang sedang berjalan. */
+/** Steps 1–3. `stage` determines which steps are done and which one is in progress. */
 export function OrderProgress({ stage }: { stage: Stage }) {
   const doneCount = stage === 'awaiting_payment' ? 1 : stage === 'delivering' ? 2 : 3
   return (
-    <ol className="grid grid-cols-3 gap-2" aria-label="Tahapan pesanan">
+    <ol className="grid grid-cols-3 gap-2" aria-label="Order progress">
       {STEPS.map((step, i) => {
         const done = i < doneCount
         const current = i === doneCount

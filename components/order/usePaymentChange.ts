@@ -7,9 +7,9 @@ import { newUuid } from '@/lib/format'
 import type { PublicOrderStatus } from '@/lib/types'
 
 /**
- * Buat kode bayar baru (kode kedaluwarsa atau ganti metode) lewat POST /orders/{ref}/payments.
- * Satu Idempotency-Key per klik; bila klik putus di tengah jalan, klik berikutnya dengan metode yang sama
- * memakai kunci yang sama, jadi tidak terbuat kode kedua.
+ * Create a new payment code (expired code or method change) via POST /orders/{ref}/payments.
+ * One Idempotency-Key per click; if a click is cut off midway, the next click with the same method
+ * reuses the same key, so no second code is created.
  */
 export function usePaymentChange(reference: string, onUpdated: (order: PublicOrderStatus) => void) {
   const [busy, setBusy] = useState(false)
@@ -33,7 +33,7 @@ export function usePaymentChange(reference: string, onUpdated: (order: PublicOrd
       }
     } catch {
       setPending({ method, key: attemptKey })
-      setError('Koneksi terputus sebelum kode dipastikan. Tekan tombolnya lagi; kode tidak akan dobel.')
+      setError('Connection lost before the code was confirmed. Press the button again; the code will not be duplicated.')
     }
     setBusy(false)
     return ok

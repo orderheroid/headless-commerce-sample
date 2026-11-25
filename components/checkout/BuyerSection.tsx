@@ -12,7 +12,7 @@ export const BUYER_FIELD_IDS: Record<keyof BuyerInput, string> = {
 type Props = {
   value: BuyerInput
   onChange: (value: BuyerInput) => void
-  /** Hanya galat field yang sudah disentuh/dikirim. */
+  /** Only errors for fields already touched/submitted. */
   errors: BuyerErrors
   onBlur: (field: keyof BuyerInput) => void
   disabled?: boolean
@@ -23,11 +23,11 @@ export function BuyerSection({ value, onChange, errors, onBlur, disabled, step }
   const set = (field: keyof BuyerInput) => (e: React.ChangeEvent<HTMLInputElement>) => onChange({ ...value, [field]: e.target.value })
   return (
     <Card>
-      <CardHeader step={step} title="Data pembeli" description="Produk dikirim ke email dan WhatsApp ini setelah pembayaran lunas." />
+      <CardHeader step={step} title="Buyer details" description="Products are sent to this email and WhatsApp number once payment is complete." />
       <div className="grid gap-4">
         <Field
           id={BUYER_FIELD_IDS.name}
-          label="Nama lengkap"
+          label="Full name"
           autoComplete="name"
           maxLength={100}
           value={value.name}
@@ -51,12 +51,12 @@ export function BuyerSection({ value, onChange, errors, onBlur, disabled, step }
         />
         <Field
           id={BUYER_FIELD_IDS.phone}
-          label="Nomor WhatsApp"
+          label="WhatsApp number"
           type="tel"
           inputMode="tel"
           autoComplete="tel"
           placeholder="081234567890"
-          hint="Pastikan nomor aktif di WhatsApp."
+          hint="Make sure this number is active on WhatsApp."
           value={value.phone}
           onChange={set('phone')}
           onBlur={() => onBlur('phone')}

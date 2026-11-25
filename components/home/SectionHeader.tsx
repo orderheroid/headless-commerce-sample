@@ -1,7 +1,7 @@
 import { Icon } from '@/components/ui'
 
-/** Judul bagian beranda, dengan keterangan dan tautan "lihat semua" opsional. */
-export function SectionHeader({ title, note, href, linkLabel = 'Lihat semua' }: { title: string; note?: string; href?: string; linkLabel?: string }) {
+/** Home page section title, with an optional note and "view all" link. */
+export function SectionHeader({ title, note, href, linkLabel = 'View all' }: { title: string; note?: string; href?: string; linkLabel?: string }) {
   return (
     <div className="mb-5 flex items-end justify-between gap-4">
       <div>

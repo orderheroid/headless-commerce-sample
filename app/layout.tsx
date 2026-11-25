@@ -9,13 +9,13 @@ import { THEME_COLOR, themeInitScript } from '@/lib/theme'
 
 import './globals.css'
 
-// Ganti font di sini. Satu keluarga untuk isi dan judul; judul (class font-display) dibuat tebal dan
-// rapat di app/globals.css. Untuk font judul berbeda, muat font kedua dan isi variabel --font-heading.
+// Change the font here. One family for body and headings; headings (class font-display) are made bold and
+// tight in app/globals.css. For a different heading font, load a second font and set the --font-heading variable.
 const font = Geist({ subsets: ['latin'], variable: '--font-body', display: 'swap' })
 
 export async function generateMetadata(): Promise<Metadata> {
   const name = await storeName()
-  return { title: { default: name, template: `%s | ${name}` }, description: `Produk digital dari ${name}` }
+  return { title: { default: name, template: `%s | ${name}` }, description: `Digital products from ${name}` }
 }
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: THEME_COLOR.light }
@@ -23,8 +23,8 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, view
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const name = await storeName()
   return (
-    // data-theme dipasang skrip di <head> sebelum hidrasi, jadi atributnya memang berbeda dari HTML server.
-    <html lang="id" className={font.variable} suppressHydrationWarning>
+    // data-theme is set by a script in <head> before hydration, so the attribute intentionally differs from the server HTML.
+    <html lang="en" className={font.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>

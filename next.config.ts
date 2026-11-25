@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   experimental: {
     serverActions: {
-      // Bukti transfer manual (maks. 4 MB, lihat config/site.ts) dikirim lewat server action.
+      // Manual transfer proof (max. 4 MB, see config/site.ts) is sent through a server action.
       bodySizeLimit: '5mb',
     },
   },

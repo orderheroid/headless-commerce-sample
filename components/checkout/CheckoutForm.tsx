@@ -30,7 +30,7 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
   const attempt = useCheckoutAttempt()
   const router = useRouter()
 
-  // ---------------------------------------------------------------- pilihan pembeli
+  // ---------------------------------------------------------------- buyer's choices
   const [method, setMethod] = useState(
     () => methods.find((m) => m.code === defaultMethod)?.code ?? methods.find((m) => m.is_default)?.code ?? methods[0]?.code ?? '',
   )
@@ -45,7 +45,7 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
     Object.entries(allErrors).filter(([field]) => showAllErrors || touched[field as keyof BuyerInput]),
   )
 
-  // ---------------------------------------------------------------- total dari API
+  // ---------------------------------------------------------------- total from the API
   const { quote, error: quoteError, loading: quoting, refresh: refreshQuote } = useQuote({
     enabled: ready,
     lines,
@@ -57,7 +57,7 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
     },
   })
 
-  // ---------------------------------------------------------------- kirim order
+  // ---------------------------------------------------------------- submit order
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [blockedUntil, setBlockedUntil] = useState(0)
@@ -91,8 +91,8 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
       if (result.ok) {
         clearCart()
         attempt.finish()
-        router.push(`/pesanan/${result.reference}`) // kode bayar tampil di halaman status
-        return // tombol tetap "memproses" sampai halaman berpindah
+        router.push(`/pesanan/${result.reference}`) // payment code is shown on the status page
+        return // button stays "processing" until the page navigates
       }
 
       if (result.code === 'COUPON_LIMIT_REACHED' || result.code === 'COUPON_INVALID') {
@@ -103,13 +103,13 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
       if (result.code === 'OUT_OF_STOCK') refreshQuote()
       setSubmitError(result.message)
     } catch {
-      // Hasil tidak diketahui. Kunci dan referensi tetap sama, jadi tombol aman ditekan lagi.
-      setSubmitError('Koneksi terputus sebelum pesanan dipastikan. Tekan tombolnya lagi; pesananmu tidak akan dobel.')
+      // Outcome unknown. Key and reference stay the same, so the button is safe to press again.
+      setSubmitError('Connection lost before the order was confirmed. Press the button again; your order will not be duplicated.')
     }
     setSubmitting(false)
   }
 
-  // ---------------------------------------------------------------- tampilan
+  // ---------------------------------------------------------------- view
   if (!ready) {
     return (
       <div className="grid gap-4 md:grid-cols-[1fr_380px]">
@@ -121,7 +121,7 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
 
   if (cart.length === 0) return <EmptyCart />
 
-  const submitLabel = submitting ? 'Memproses pesanan…' : waitSeconds > 0 ? `Tunggu ${waitSeconds} detik` : quoting ? 'Menghitung total…' : 'Bayar sekarang'
+  const submitLabel = submitting ? 'Processing order…' : waitSeconds > 0 ? `Wait ${waitSeconds}s` : quoting ? 'Calculating total…' : 'Pay now'
 
   return (
     <form onSubmit={submit} noValidate className="grid gap-4 pb-28 md:grid-cols-[1fr_380px] md:items-start md:gap-6 md:pb-0">
@@ -140,7 +140,7 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
 
       <div className="grid gap-4 md:sticky md:top-20">
         <Card>
-          <CardHeader title="Ringkasan pesanan" />
+          <CardHeader title="Order summary" />
           <div className="space-y-4">
             <CouponField
               applied={coupon && quote?.coupon ? quote.coupon.code : null}
@@ -155,20 +155,20 @@ export function CheckoutForm({ methods, defaultMethod }: Props) {
             />
             <OrderSummary quote={quote} loading={quoting} error={quoteError} />
             {submitError && <Notice>{submitError}</Notice>}
-            {/* Layar lebar saja; di HP tombolnya ada di bar bawah. Dibungkus <div> karena class
-                `hidden` pada tombol kalah oleh `inline-flex` bawaan Button. */}
+            {/* Wide screens only; on mobile the button is in the bottom bar. Wrapped in a <div> because the
+                `hidden` class on the button loses to Button's built-in `inline-flex`. */}
             <div className="hidden md:block">
               <Button type="submit" size="lg" block disabled={!canSubmit}>
                 {submitLabel}
               </Button>
             </div>
-            <p className="text-center text-xs text-fg-subtle">Setelah ini, kode QRIS atau nomor pembayaran langsung tampil.</p>
+            <p className="text-center text-xs text-fg-subtle">Next, your QRIS code or payment number is shown right away.</p>
           </div>
         </Card>
         <Assurances className="px-1" />
       </div>
 
-      {/* Bar bayar di HP: total dan tombol selalu terlihat. */}
+      {/* Mobile pay bar: total and button always visible. */}
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur md:hidden">
         <div className="mx-auto flex max-w-6xl items-center gap-3">
           <div className="min-w-0 flex-1">
@@ -190,10 +190,10 @@ function EmptyCart() {
       <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-accent">
         <Icon name="cart" className="h-7 w-7" />
       </span>
-      <p className="mt-4 font-semibold text-fg">Keranjangmu masih kosong</p>
-      <p className="mt-1 text-sm text-fg-subtle">Pilih produk dulu, lalu kembali ke sini untuk membayar.</p>
+      <p className="mt-4 font-semibold text-fg">Your cart is empty</p>
+      <p className="mt-1 text-sm text-fg-subtle">Pick a product first, then come back here to pay.</p>
       <ButtonLink href="/" className="mt-5">
-        Lihat produk
+        Browse products
       </ButtonLink>
     </div>
   )

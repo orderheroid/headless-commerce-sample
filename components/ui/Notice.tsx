@@ -13,7 +13,7 @@ const tones: Record<Tone, { box: string; icon: IconName }> = {
   neutral: { box: 'border-line bg-subtle text-fg', icon: 'info' },
 }
 
-/** Kotak pesan. `title` opsional; isi boleh berupa teks atau elemen. */
+/** Message box. `title` is optional; the content can be text or elements. */
 export function Notice({ tone = 'error', title, children, className }: { tone?: Tone; title?: ReactNode; children?: ReactNode; className?: string }) {
   const t = tones[tone]
   return (

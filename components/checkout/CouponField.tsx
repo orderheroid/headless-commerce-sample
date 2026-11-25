@@ -6,7 +6,7 @@ import { Button, Icon, inputClass } from '@/components/ui'
 import { cn } from '@/lib/cn'
 
 type Props = {
-  /** Kode yang sedang dipakai dan sudah diterima quote. */
+  /** Code currently applied and accepted by the quote. */
   applied: string | null
   onApply: (code: string) => void
   onRemove: () => void
@@ -16,8 +16,8 @@ type Props = {
 }
 
 /**
- * Kupon dikirim ke quote hanya saat tombol "Pakai" ditekan, bukan tiap ketikan:
- * pemeriksaan kupon punya kuota sendiri (20/menit per kunci).
+ * The coupon is sent to the quote only when "Apply" is pressed, not on every keystroke:
+ * coupon checks have their own quota (20/minute per key).
  */
 export function CouponField({ applied, onApply, onRemove, error, onClearError, disabled }: Props) {
   const [input, setInput] = useState('')
@@ -27,7 +27,7 @@ export function CouponField({ applied, onApply, onRemove, error, onClearError, d
     return (
       <div className="flex items-center justify-between gap-3 rounded-xl bg-success-soft px-3.5 py-2.5 text-sm text-success">
         <span className="flex items-center gap-2">
-          <Icon name="tag" className="h-4 w-4" /> Kupon <strong>{applied}</strong> dipakai
+          <Icon name="tag" className="h-4 w-4" /> Coupon <strong>{applied}</strong> applied
         </span>
         <button
           type="button"
@@ -37,7 +37,7 @@ export function CouponField({ applied, onApply, onRemove, error, onClearError, d
             setInput('')
           }}
         >
-          Hapus
+          Remove
         </button>
       </div>
     )
@@ -46,7 +46,7 @@ export function CouponField({ applied, onApply, onRemove, error, onClearError, d
   if (!open && !error) {
     return (
       <button type="button" onClick={() => setOpen(true)} className="flex items-center gap-2 text-sm font-medium text-accent hover:underline">
-        <Icon name="tag" className="h-4 w-4" /> Punya kode kupon?
+        <Icon name="tag" className="h-4 w-4" /> Have a coupon code?
       </button>
     )
   }
@@ -59,7 +59,7 @@ export function CouponField({ applied, onApply, onRemove, error, onClearError, d
   return (
     <div>
       <label htmlFor="coupon" className="mb-1.5 block text-sm font-medium text-fg">
-        Kode kupon
+        Coupon code
       </label>
       <div className="flex gap-2">
         <input
@@ -82,7 +82,7 @@ export function CouponField({ applied, onApply, onRemove, error, onClearError, d
           }}
         />
         <Button variant="secondary" size="lg" onClick={apply} disabled={!input.trim() || disabled} className="shrink-0">
-          Pakai
+          Apply
         </Button>
       </div>
       {error && <p className="mt-1.5 text-sm text-danger">{error}</p>}

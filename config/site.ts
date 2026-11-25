@@ -1,70 +1,70 @@
 // =============================================================================
-// Pengaturan toko. Ubah di sini dulu sebelum mengubah komponen.
-// Warna ada di app/globals.css (@theme → --color-brand-*), font di app/layout.tsx.
+// Store settings. Change things here first before editing components.
+// Colors are in app/globals.css (@theme → --color-brand-*), fonts in app/layout.tsx.
 // =============================================================================
 
 export const site = {
-  /** Dipakai bila GET /meta belum punya `store_name` (isi Profil Bisnis di dashboard OrderHero). */
-  fallbackName: 'Toko Digital',
-  /** Format angka dan tanggal. */
+  /** Used when GET /meta has no `store_name` yet (fill in Profil Bisnis in the OrderHero dashboard). */
+  fallbackName: 'Digital Store',
+  /** Number and date format. */
   locale: 'id-ID',
   timeZone: 'Asia/Jakarta',
 
   home: {
-    /** Teks kecil di atas judul; `{store}` diganti nama toko. */
-    eyebrow: 'Toko digital {store}',
-    /** Judul dua bagian: bagian kedua dicetak miring dengan garis stabilo. */
-    title: 'Produk digital,',
-    titleAccent: 'langsung sampai.',
-    subtitle: 'Pilih produk, bayar dengan cara yang kamu suka, dan terima produknya otomatis di email dan WhatsApp-mu.',
-    primaryCta: 'Lihat produk',
-    secondaryCta: 'Cara beli',
-    featuredTitle: 'Pilihan unggulan',
+    /** Small text above the title; `{store}` is replaced with the store name. */
+    eyebrow: '{store} digital store',
+    /** Two-part title: the second part is set in italics with a highlighter stroke. */
+    title: 'Digital products,',
+    titleAccent: 'delivered instantly.',
+    subtitle: 'Pick a product, pay the way you like, and get it delivered automatically to your email and WhatsApp.',
+    primaryCta: 'Browse products',
+    secondaryCta: 'How to buy',
+    featuredTitle: 'Featured picks',
     featuredCount: 6,
-    catalogTitle: 'Semua produk',
-    searchPlaceholder: 'Cari produk…',
-    /** Produk yang ditampilkan per langkah scroll di katalog. */
+    catalogTitle: 'All products',
+    searchPlaceholder: 'Search products…',
+    /** Products shown per scroll step in the catalog. */
     pageSize: 12,
-    howToBuyTitle: 'Cara beli',
+    howToBuyTitle: 'How to buy',
     howToBuy: [
-      { title: 'Pilih produk', text: 'Tambahkan produk ke keranjang, lalu buka checkout.' },
-      { title: 'Bayar', text: 'Scan QRIS, transfer ke virtual account, atau bayar di gerai.' },
-      { title: 'Terima produk', text: 'Produk dikirim otomatis ke email dan WhatsApp-mu setelah lunas.' },
+      { title: 'Pick a product', text: 'Add products to your cart, then go to checkout.' },
+      { title: 'Pay', text: 'Scan QRIS, transfer to a virtual account, or pay at a retail outlet.' },
+      { title: 'Get your product', text: 'Your product is sent automatically to your email and WhatsApp once paid.' },
     ],
   },
 
-  /** Poin kepercayaan yang tampil di halaman produk dan checkout. */
+  /** Trust points shown on the product page and at checkout. */
   assurances: [
-    { icon: 'bolt', text: 'Dikirim otomatis setelah lunas' },
-    { icon: 'mail', text: 'Ke email dan WhatsApp-mu' },
-    { icon: 'shield', text: 'Pembayaran aman lewat OrderHero' },
+    { icon: 'bolt', text: 'Delivered automatically once paid' },
+    { icon: 'mail', text: 'To your email and WhatsApp' },
+    { icon: 'shield', text: 'Secure payment through OrderHero' },
   ],
 
-  footer: 'Produk digital dikirim ke email dan WhatsApp setelah pembayaran lunas.',
-  /** Font: lihat app/layout.tsx. Warna: lihat app/globals.css. */
+  footer: 'Digital products are delivered to your email and WhatsApp once payment is complete.',
+  /** Fonts: see app/layout.tsx. Colors: see app/globals.css. */
 } as const
 
 export const checkoutConfig = {
-  /** Jeda sebelum total dihitung ulang setelah keranjang/kupon/metode berubah (disarankan ±400 ms). */
+  /** Delay before the total is recalculated after the cart/coupon/method changes (±400 ms recommended). */
   quoteDebounceMs: 400,
   /**
-   * Keranjang berisi produk yang stoknya dihitung: order belum dibayar ditutup setelah sekian menit
-   * (`expires_in_minutes`, 15–1.440) supaya stok tidak tertahan order palsu. Produk lain: 24 jam.
+   * Cart contains stock-tracked products: an unpaid order closes after this many minutes
+   * (`expires_in_minutes`, 15–1,440) so stock is not held by fake orders. Other products: 24 hours.
    */
   stockHoldMinutes: 60,
 } as const
 
 export const orderStatusConfig = {
-  /** Batas ukuran bukti transfer manual. Di bawah batas body Vercel (4,5 MB); API menerima sampai 5 MB. */
+  /** Size limit for manual transfer proof. Below Vercel's body limit (4.5 MB); the API accepts up to 5 MB. */
   proofMaxBytes: 4 * 1024 * 1024,
   proofTypes: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
-  /** Interval polling halaman status (disarankan 5–10 detik). */
+  /** Status page polling interval (5–10 seconds recommended). */
   pollMs: 10_000,
-  /** Setelah ini polling berhenti dan diganti tombol "Periksa status". */
+  /** After this, polling stops and is replaced by a "Check status" button. */
   maxPollMs: 30 * 60_000,
-  /** Setelah tenggat order, tetap periksa sebentar untuk pembayaran menit terakhir. */
+  /** After the order deadline, keep checking briefly for last-minute payments. */
   graceAfterCloseMs: 10 * 60_000,
-  /** Lunas tetapi belum terkirim lebih dari ini (bila API belum mengirim `delivery.status`). */
+  /** Paid but not yet delivered for longer than this (when the API does not send `delivery.status` yet). */
   deliverySlowMs: 5 * 60_000,
 } as const
 

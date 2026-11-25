@@ -6,17 +6,17 @@ const idr = new Intl.NumberFormat(site.locale, {
   maximumFractionDigits: 0,
 })
 
-/** Hanya memformat angka dari API; tidak ada perhitungan harga di sini. */
+/** Only formats numbers from the API; no price calculation happens here. */
 export function rupiah(amount: number): string {
   return idr.format(amount)
 }
 
-/** "25 Nov 2026, 20.45" di zona waktu toko. */
+/** "25 Nov 2026, 20.45" in the store's time zone. */
 export function dateTime(value: string | number | Date): string {
   return new Date(value).toLocaleString(site.locale, { dateStyle: 'medium', timeStyle: 'short', timeZone: site.timeZone })
 }
 
-/** Sisa waktu "1:05:09" atau "05:09". */
+/** Time remaining, "1:05:09" or "05:09". */
 export function remaining(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000))
   const h = Math.floor(total / 3600)
@@ -32,7 +32,7 @@ export function isUuid(value: unknown): value is string {
   return typeof value === 'string' && UUID_RE.test(value)
 }
 
-/** UUID v4 di browser; cadangan getRandomValues untuk browser tanpa crypto.randomUUID. */
+/** UUID v4 in the browser; getRandomValues fallback for browsers without crypto.randomUUID. */
 export function newUuid(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
   const b = crypto.getRandomValues(new Uint8Array(16))

@@ -7,8 +7,8 @@ const config = [
   { ignores: ['.next/**', 'node_modules/**', 'next-env.d.ts'] },
   {
     rules: {
-      // Gambar produk dan logo kanal berasal dari domain merchant yang tidak diketahui sebelumnya,
-      // jadi toko ini memakai <img> biasa (lihat components/ui/ProductImage.tsx).
+      // Product images and channel logos come from merchant domains that are not known in advance,
+      // so this store uses a plain <img> (see components/ui/ProductImage.tsx).
       '@next/next/no-img-element': 'off',
     },
   },

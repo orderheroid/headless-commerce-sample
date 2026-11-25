@@ -4,8 +4,8 @@ import { getProduct, listDigitalProducts } from './orderhero'
 import { plainText, sanitizeDescription } from './sanitize'
 import type { Product } from './types'
 
-// Mengubah produk dari API menjadi data tampilan. Halaman dan komponen hanya menerima bentuk di bawah,
-// jadi aturan katalog (varian aktif, stok tingkat produk, harga bebas) cukup diubah di sini.
+// Turns API products into display data. Pages and components only receive the shapes below,
+// so catalog rules (active variants, product-level stock, pay-what-you-want) only need changing here.
 
 export type ProductSummary = {
   id: string
@@ -17,9 +17,9 @@ export type ProductSummary = {
   comparePrice: number | null
   hasVariants: boolean
   soldOut: boolean
-  /** Ditandai "unggulan" oleh merchant di dashboard */
+  /** Marked "featured" by the merchant in the dashboard */
   featured: boolean
-  /** Produk harga bebas (PWYW): harga minimum, atau null */
+  /** Pay-what-you-want (PWYW) product: minimum price, or null */
   pwywMin: number | null
   category: { id: string; name: string } | null
 }
@@ -29,7 +29,7 @@ export type VariantOption = { id: string; name: string; price: number | null; co
 export type ProductDetail = ProductSummary & {
   images: { url: string; alt: string }[]
   variants: VariantOption[]
-  /** Stok tingkat produk; null = stok tidak dihitung */
+  /** Product-level stock; null = stock is not tracked */
   stock: number | null
   descriptionHtml: string
   pwyw: { minPrice: number; suggestedPrice: number | null } | null
@@ -65,27 +65,27 @@ function toSummary(p: Product): ProductSummary {
   }
 }
 
-/** Katalog untuk halaman depan (hanya produk digital, unggulan dulu; di-cache 300 detik). */
+/** Catalog for the home page (digital products only, featured first; cached for 300 seconds). */
 export async function getCatalog(): Promise<ProductSummary[]> {
   return (await listDigitalProducts()).map(toSummary)
 }
 
 /**
- * Produk untuk etalase "unggulan": yang ditandai merchant, lalu dilengkapi produk lain yang bergambar
- * dan tidak habis, sampai `limit`.
+ * Products for the "featured" showcase: those marked by the merchant, then topped up with other products
+ * that have an image and are not sold out, up to `limit`.
  */
 export function pickFeatured(products: ProductSummary[], limit: number): ProductSummary[] {
   const available = products.filter((p) => !p.soldOut)
   const marked = available.filter((p) => p.featured)
-  // Pelengkap: bergambar, dan produk harga bebas paling belakang (dibeli lewat form OrderHero).
+  // Top-up: with an image, and pay-what-you-want products last (bought through the OrderHero form).
   const rest = available.filter((p) => !p.featured && p.image).sort((a, b) => Number(a.pwywMin !== null) - Number(b.pwywMin !== null))
   return [...marked, ...rest].slice(0, limit)
 }
 
-/** Detail produk; null bila tidak ada, non-aktif, atau bukan produk digital. */
+/** Product detail; null if it does not exist, is inactive, or is not a digital product. */
 export async function getProductDetail(slug: string): Promise<ProductDetail | null> {
   const p = await getProduct(slug)
-  // Toko ini hanya produk digital; produk fisik butuh alamat dan ongkir yang tidak dibangun di sini.
+  // This store is digital products only; physical products need an address and shipping, which are not built here.
   if (!p || !p.is_digital) return null
   const summary = toSummary(p)
   return {

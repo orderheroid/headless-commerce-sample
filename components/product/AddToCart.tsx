@@ -9,9 +9,9 @@ import type { ProductDetail } from '@/lib/catalog'
 type Props = Pick<ProductDetail, 'id' | 'slug' | 'name' | 'image' | 'price' | 'comparePrice' | 'variants' | 'stock'>
 
 /**
- * Pilih varian dan jumlah, lalu simpan ke keranjang (localStorage).
- * Harga di sini hanya tampilan katalog; total yang ditagih selalu dari quote di checkout.
- * Di HP, harga dan tombol menempel di bawah layar.
+ * Pick a variant and quantity, then save to the cart (localStorage).
+ * The price here is catalog display only; the total charged always comes from the quote at checkout.
+ * On mobile, the price and button stick to the bottom of the screen.
  */
 export function AddToCart(product: Props) {
   const { variants, stock } = product
@@ -39,11 +39,11 @@ export function AddToCart(product: Props) {
     setAdded(true)
   }
 
-  // Setelah ditambahkan: dua pilihan jelas, lanjut belanja atau checkout.
+  // After adding: two clear choices, keep shopping or checkout.
   const actions = added ? (
     <div className="grid grid-cols-2 gap-2">
       <ButtonLink href="/" variant="secondary" size="lg">
-        Belanja lagi
+        Keep shopping
       </ButtonLink>
       <ButtonLink href="/checkout" size="lg">
         Checkout <Icon name="arrow-right" className="h-4 w-4" />
@@ -51,7 +51,7 @@ export function AddToCart(product: Props) {
     </div>
   ) : (
     <Button size="lg" block onClick={add} disabled={!canAdd}>
-      {soldOut ? 'Stok habis' : 'Tambah ke keranjang'}
+      {soldOut ? 'Sold out' : 'Add to cart'}
     </Button>
   )
 
@@ -59,18 +59,18 @@ export function AddToCart(product: Props) {
     <div className="space-y-6">
       <div>
         <Price amount={price} compareAt={comparePrice} size="lg" />
-        {/* Stok yang ditampilkan selalu stok tingkat produk, bukan stok varian. */}
+        {/* The stock shown is always product-level stock, not variant stock. */}
         {stock !== null && (
-          <p className={soldOut ? 'mt-1.5 text-sm font-medium text-danger' : 'mt-1.5 text-sm text-fg-subtle'}>{soldOut ? 'Stok habis' : `Tersisa ${stock}`}</p>
+          <p className={soldOut ? 'mt-1.5 text-sm font-medium text-danger' : 'mt-1.5 text-sm text-fg-subtle'}>{soldOut ? 'Sold out' : `${stock} left`}</p>
         )}
       </div>
 
       {variants.length > 0 && (
         <div>
-          <p className="mb-2.5 text-sm font-medium text-fg">Pilih varian</p>
+          <p className="mb-2.5 text-sm font-medium text-fg">Choose a variant</p>
           <ChoiceList
             name="variant"
-            label="Pilih varian"
+            label="Choose a variant"
             layout="chips"
             value={variantId}
             onChange={(id) => {
@@ -84,7 +84,7 @@ export function AddToCart(product: Props) {
 
       {!soldOut && (
         <div className="flex items-center justify-between gap-3 md:justify-start">
-          <span className="text-sm font-medium text-fg">Jumlah</span>
+          <span className="text-sm font-medium text-fg">Quantity</span>
           <QuantityStepper
             value={quantity}
             onChange={(q) => {
@@ -99,24 +99,24 @@ export function AddToCart(product: Props) {
 
       {added && (
         <p className="flex items-center gap-2 text-sm font-medium text-success" role="status">
-          <Icon name="check-circle" className="h-5 w-5" /> Ditambahkan ke keranjang
+          <Icon name="check-circle" className="h-5 w-5" /> Added to cart
         </p>
       )}
 
       <div className="hidden md:block">{actions}</div>
 
-      {/* Bar aksi di HP: selalu terjangkau ibu jari. */}
+      {/* Action bar on mobile: always within thumb reach. */}
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-canvas/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md md:hidden">
         {added ? (
           actions
         ) : (
           <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
-              <p className="text-xs text-fg-subtle">Harga</p>
+              <p className="text-xs text-fg-subtle">Price</p>
               <Price amount={price} size="md" className="[&>span]:truncate" />
             </div>
             <Button size="lg" onClick={add} disabled={!canAdd} className="min-w-44">
-              {soldOut ? 'Stok habis' : 'Tambah ke keranjang'}
+              {soldOut ? 'Sold out' : 'Add to cart'}
             </Button>
           </div>
         )}

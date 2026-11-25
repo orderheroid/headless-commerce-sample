@@ -3,12 +3,12 @@ import { cn } from '@/lib/cn'
 import { rupiah } from '@/lib/format'
 import type { Quote } from '@/lib/types'
 
-/** Ringkasan biaya. Semua angka dari respons POST /checkout/quote, tidak ada yang dihitung di sini. */
+/** Cost summary. Every number comes from the POST /checkout/quote response; nothing is calculated here. */
 export function OrderSummary({ quote, loading, error }: { quote: Quote | null; loading: boolean; error: string | null }) {
   if (!quote) {
     if (error) return <Notice>{error}</Notice>
     return (
-      <div className="space-y-3" aria-label="Menghitung total">
+      <div className="space-y-3" aria-label="Calculating total">
         <Skeleton className="h-4" />
         <Skeleton className="h-4 w-2/3" />
         <Skeleton className="h-7" />
@@ -25,11 +25,11 @@ export function OrderSummary({ quote, loading, error }: { quote: Quote | null; l
         <div className="border-t border-line-soft pt-2">
           <Row label="Subtotal" value={rupiah(quote.subtotal)} />
         </div>
-        {quote.bump > 0 && <Row label="Tambahan" value={rupiah(quote.bump)} />}
+        {quote.bump > 0 && <Row label="Add-on" value={rupiah(quote.bump)} />}
         {quote.discount > 0 && (
-          <Row label={`Diskon${quote.coupon ? ` (${quote.coupon.code})` : ''}`} value={`−${rupiah(quote.discount)}`} className="text-success" />
+          <Row label={`Discount${quote.coupon ? ` (${quote.coupon.code})` : ''}`} value={`−${rupiah(quote.discount)}`} className="text-success" />
         )}
-        {quote.transaction_fee > 0 && <Row label="Biaya transaksi" value={rupiah(quote.transaction_fee)} />}
+        {quote.transaction_fee > 0 && <Row label="Transaction fee" value={rupiah(quote.transaction_fee)} />}
         <div className="flex items-baseline justify-between border-t border-line pt-3">
           <dt className="font-semibold">Total</dt>
           <dd className="text-xl font-bold tabular-nums text-accent">{rupiah(quote.total)}</dd>

@@ -2,10 +2,10 @@ import 'server-only'
 
 import sanitizeHtml from 'sanitize-html'
 
-// Teks produk datang dari merchant. `description` adalah HTML (lihat OpenAPI); `short_description`
-// juga sering berisi HTML dan entitas (`<p>`, `&amp;`).
+// Product text comes from the merchant. `description` is HTML (see OpenAPI); `short_description`
+// often contains HTML and entities too (`<p>`, `&amp;`).
 
-/** HTML deskripsi yang aman dirender dengan dangerouslySetInnerHTML. */
+/** Description HTML that is safe to render with dangerouslySetInnerHTML. */
 export function sanitizeDescription(html: string | null): string {
   if (!html) return ''
   return sanitizeHtml(html, {
@@ -32,7 +32,7 @@ function decodeEntities(text: string): string {
   })
 }
 
-/** Teks polos satu paragraf (untuk ringkasan di kartu produk dan meta description). */
+/** Single-paragraph plain text (for the product card summary and meta description). */
 export function plainText(html: string | null, maxLength = 200): string | null {
   if (!html) return null
   const text = decodeEntities(sanitizeHtml(html, { allowedTags: [], allowedAttributes: {} }))

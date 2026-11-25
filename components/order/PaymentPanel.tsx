@@ -20,8 +20,8 @@ type Props = {
 }
 
 /**
- * Instruksi bayar di halaman toko: QR (QRIS), nomor VA, atau kode gerai, plus hitung mundur dan
- * ganti metode. Tautan ke halaman bayar OrderHero tetap ada sebagai cadangan.
+ * Payment instructions on the store's page: QR (QRIS), VA number, or retail outlet code, plus a countdown and
+ * method change. The link to the OrderHero payment page stays as a fallback.
  */
 export function PaymentPanel({ reference, order, methods, onUpdated }: Props) {
   const now = useNow(1000)
@@ -30,9 +30,9 @@ export function PaymentPanel({ reference, order, methods, onUpdated }: Props) {
   const payment = order.payment
   const currentCode = payment?.method_code ?? order.payment_method
   const method = methods.find((m) => m.code === currentCode) ?? null
-  const methodLabel = method?.label ?? currentCode ?? 'pembayaran'
+  const methodLabel = method?.label ?? currentCode ?? 'payment'
 
-  // Transfer manual tidak punya kode bayar (`payment` null): yang tampil rekening tujuan.
+  // Manual transfer has no payment code (`payment` is null): the destination account is shown instead.
   const manualBank = method?.category === 'MANUAL_TRANSFER' ? (method.bank ?? null) : null
 
   const expired = payment ? isPaymentExpired(payment, now) : false
@@ -41,9 +41,9 @@ export function PaymentPanel({ reference, order, methods, onUpdated }: Props) {
 
   return (
     <Card className="space-y-5">
-      {/* Metode dan jumlah: total order dari API, sudah termasuk perubahan bila metode diganti. */}
+      {/* Method and amount: order total from the API, already including changes if the method was switched. */}
       <div className="flex items-center gap-3">
-        {/* Logo kanal dibuat untuk latar terang: tetap di kotak putih pada mode gelap. */}
+        {/* Channel logos are made for light backgrounds: keep the white box in dark mode. */}
         <span className="flex h-11 w-14 shrink-0 items-center justify-center rounded-xl border border-line bg-white">
           {method?.image ? (
             <img src={method.image} alt="" className="max-h-7 max-w-11 object-contain" />
@@ -52,11 +52,11 @@ export function PaymentPanel({ reference, order, methods, onUpdated }: Props) {
           )}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-fg-subtle">Bayar dengan</p>
+          <p className="text-xs text-fg-subtle">Pay with</p>
           <p className="truncate font-semibold">{methodLabel}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-fg-subtle">Jumlah</p>
+          <p className="text-xs text-fg-subtle">Amount</p>
           <p className="text-xl font-bold tabular-nums text-accent">{rupiah(order.total)}</p>
         </div>
       </div>
@@ -65,7 +65,7 @@ export function PaymentPanel({ reference, order, methods, onUpdated }: Props) {
         <div className="flex items-center justify-between gap-3 rounded-xl bg-warning-soft px-4 py-3 text-sm text-warning">
           <span className="flex items-center gap-2">
             <Icon name="clock" className="h-5 w-5" />
-            Bayar sebelum {dateTime(deadline)}
+            Pay before {dateTime(deadline)}
           </span>
           <span className="font-mono font-semibold tabular-nums">{remaining(deadline - now)}</span>
         </div>
@@ -95,9 +95,9 @@ export function PaymentPanel({ reference, order, methods, onUpdated }: Props) {
 
       {order.payment_page_url && (
         <p className="border-t border-line-soft pt-4 text-center text-sm text-fg-subtle">
-          Ada kendala?{' '}
+          Having trouble?{' '}
           <a href={order.payment_page_url} className="font-medium text-accent underline underline-offset-2">
-            Bayar lewat halaman pembayaran OrderHero
+            Pay via the OrderHero payment page
           </a>
         </p>
       )}
@@ -117,17 +117,17 @@ type BodyProps = {
   orderNumber: string | null
 }
 
-/** Isi utama panel sesuai keadaan kode bayar. */
+/** Main panel content based on the payment code state. */
 function PaymentBody({ payment, expired, newCodeAllowed, methodLabel, category, closesAt, busy, onRegenerate, orderNumber }: BodyProps) {
   const tooLate = (
-    <Notice tone="neutral" title="Kode baru tidak bisa dibuat">
-      Pesanan ini {closesAt ? `ditutup pada ${dateTime(closesAt)}` : 'sebentar lagi ditutup'}. Silakan buat pesanan baru bila masih ingin membeli.
+    <Notice tone="neutral" title="A new code cannot be created">
+      This order {closesAt ? `closes on ${dateTime(closesAt)}` : 'is about to close'}. Please place a new order if you still want to buy.
     </Notice>
   )
 
   if (!payment) {
     return newCodeAllowed ? (
-      <Notice tone="info">Kode pembayaran belum tersedia. Pilih metode di bawah untuk membuat kode, atau gunakan halaman pembayaran OrderHero.</Notice>
+      <Notice tone="info">No payment code is available yet. Choose a method below to create one, or use the OrderHero payment page.</Notice>
     ) : (
       tooLate
     )
@@ -136,11 +136,11 @@ function PaymentBody({ payment, expired, newCodeAllowed, methodLabel, category, 
   if (expired) {
     return (
       <div className="space-y-3">
-        <Notice title="Kode pembayaran kedaluwarsa">Buat kode baru untuk melanjutkan pembayaran.</Notice>
+        <Notice title="Payment code expired">Create a new code to continue your payment.</Notice>
         {newCodeAllowed ? (
           <Button size="lg" block disabled={busy} onClick={onRegenerate}>
             <Icon name="refresh" className="h-5 w-5" />
-            {busy ? 'Membuat kode…' : 'Buat kode baru'}
+            {busy ? 'Creating code…' : 'Create new code'}
           </Button>
         ) : (
           tooLate
@@ -149,16 +149,16 @@ function PaymentBody({ payment, expired, newCodeAllowed, methodLabel, category, 
     )
   }
 
-  if (payment.qris_payload) return <QrisCode payload={payment.qris_payload} fileName={`qris-${orderNumber ?? 'pesanan'}.png`} />
+  if (payment.qris_payload) return <QrisCode payload={payment.qris_payload} fileName={`qris-${orderNumber ?? 'order'}.png`} />
   if (payment.virtual_account) {
     return <PaymentCode code={payment.virtual_account} kind={category === 'RETAIL' ? 'retail' : 'va'} methodLabel={methodLabel} />
   }
   if (payment.payment_url) {
     return (
       <ButtonLink href={payment.payment_url} size="lg" block>
-        Lanjutkan ke {methodLabel}
+        Continue to {methodLabel}
       </ButtonLink>
     )
   }
-  return <Notice tone="info">Kode pembayaran belum bisa ditampilkan di sini. Gunakan halaman pembayaran OrderHero di bawah.</Notice>
+  return <Notice tone="info">The payment code cannot be shown here yet. Use the OrderHero payment page below.</Notice>
 }

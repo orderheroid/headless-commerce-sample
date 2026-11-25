@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
-/** Jam yang diperbarui berkala (untuk hitung mundur dan batas waktu). */
+/** A clock that updates periodically (for countdowns and deadlines). */
 export function useNow(intervalMs = 1000): number {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
@@ -13,14 +13,14 @@ export function useNow(intervalMs = 1000): number {
 }
 
 /**
- * Tampilkan daftar panjang sedikit demi sedikit: `visible` bertambah `pageSize` setiap elemen penjaga
- * (`sentinelRef`) mendekati layar. Kembali ke halaman pertama setiap `resetKey` berubah (mis. filter).
+ * Show a long list a bit at a time: `visible` grows by `pageSize` each time the sentinel element
+ * (`sentinelRef`) nears the viewport. Returns to the first page whenever `resetKey` changes (e.g. a filter).
  */
 export function useInfiniteList(total: number, pageSize: number, resetKey: unknown) {
   const [visible, setVisible] = useState(pageSize)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
-  // Reset saat filter berubah, dilakukan saat render (pola React untuk "state mengikuti prop").
+  // Reset when the filter changes, done during render (the React pattern for "state follows prop").
   const [lastKey, setLastKey] = useState(resetKey)
   if (lastKey !== resetKey) {
     setLastKey(resetKey)
@@ -41,7 +41,7 @@ export function useInfiniteList(total: number, pageSize: number, resetKey: unkno
   return { visible: Math.min(visible, total), hasMore, loadMore, sentinelRef }
 }
 
-/** true setelah komponen terpasang di browser (hindari kedip isi localStorage saat hidrasi). */
+/** true once the component has mounted in the browser (avoids a flash of localStorage content during hydration). */
 export function useMounted(): boolean {
   return useSyncExternalStore(subscribeNever, () => true, () => false)
 }

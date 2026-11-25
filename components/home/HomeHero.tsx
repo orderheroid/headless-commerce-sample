@@ -5,10 +5,10 @@ import { ButtonLink, Icon, ProductImage } from '@/components/ui'
 import type { ProductSummary } from '@/lib/catalog'
 import { cn } from '@/lib/cn'
 
-/** Posisi tiga sampul yang "berkipas": kiri miring, tengah di depan, kanan miring. */
+/** Positions of the three "fanned" covers: left tilted, center in front, right tilted. */
 const FAN = ['-rotate-[8deg] translate-x-5 translate-y-3', 'z-10 -translate-y-1 scale-105', 'rotate-[8deg] -translate-x-5 translate-y-3']
 
-/** Pembuka beranda: judul besar, ajakan, dan tumpukan sampul produk. */
+/** Home page opener: big title, call to action, and a stack of product covers. */
 export function HomeHero({ storeName, showcase, productCount }: { storeName: string; showcase: ProductSummary[]; productCount: number }) {
   const covers = showcase.filter((p) => p.image).slice(0, 3)
 
@@ -38,7 +38,7 @@ export function HomeHero({ storeName, showcase, productCount }: { storeName: str
             {site.home.secondaryCta}
           </ButtonLink>
         </div>
-        <p className="mt-4 text-sm text-fg-subtle">{productCount} produk siap dikirim otomatis</p>
+        <p className="mt-4 text-sm text-fg-subtle">{productCount} {productCount === 1 ? 'product' : 'products'} ready for automatic delivery</p>
       </div>
 
       {covers.length === 3 && (

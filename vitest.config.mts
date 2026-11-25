@@ -6,7 +6,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('.', import.meta.url)),
-      // Penanda 'server-only' milik Next.js; di test cukup modul kosong.
+      // Next.js's 'server-only' marker; in tests an empty module is enough.
       'server-only': fileURLToPath(new URL('./tests/server-only.ts', import.meta.url)),
     },
   },

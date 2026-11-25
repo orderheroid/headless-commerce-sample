@@ -1,15 +1,15 @@
-// Aturan status order (dipakai server dan browser).
-// API meneruskan nilai status apa adanya, termasuk nilai lama, jadi daftarnya sengaja longgar.
+// Order status rules (used by server and browser).
+// The API passes status values through as is, including legacy values, so the list is deliberately loose.
 
-/** `status` atau `payment_status` bernilai ini = order tertutup, polling berhenti. */
+/** `status` or `payment_status` with one of these values = order closed, polling stops. */
 export const CLOSED_VALUES = ['cancelled', 'canceled', 'expired', 'failed', 'refunded', 'returned', 'deleted']
 
-/** Cadangan bila order tidak membawa `expires_at`: order ditutup `created_at` + 24 jam. */
+/** Fallback when the order has no `expires_at`: the order closes at `created_at` + 24 hours. */
 export const ORDER_LIFETIME_MS = 24 * 60 * 60_000
 
 /**
- * OrderHero membatasi masa berlaku kode bayar sampai tenggat order, dan menolak kode baru
- * bila sisa waktunya kurang dari 5 menit (`409 ORDER_CLOSED`). Toko mengikuti batas yang sama.
+ * OrderHero caps a payment code's validity at the order deadline, and rejects a new code
+ * when less than 5 minutes remain (`409 ORDER_CLOSED`). The store follows the same limit.
  */
 export const NO_NEW_CODE_BEFORE_CLOSE_MS = 5 * 60_000
 
@@ -27,7 +27,7 @@ function time(iso: string | null | undefined): number | null {
   return Number.isFinite(t) ? t : null
 }
 
-/** Batas tutup order: `expires_at` order bila ada, selain itu `created_at` + 24 jam. */
+/** Order closing time: the order's `expires_at` if present, otherwise `created_at` + 24 hours. */
 export function closesAt(order: { expires_at?: string | null; created_at?: string | null }): string | null {
   const explicit = time(order.expires_at)
   if (explicit !== null) return new Date(explicit).toISOString()
@@ -35,26 +35,26 @@ export function closesAt(order: { expires_at?: string | null; created_at?: strin
   return created === null ? null : new Date(created + ORDER_LIFETIME_MS).toISOString()
 }
 
-/** Order sudah lewat batas tutup walau cron belum menulis status `cancelled`. */
+/** The order is past its closing time even if the cron has not written the `cancelled` status yet. */
 export function isPastClosing(o: { closes_at: string | null }, now = Date.now()): boolean {
   const t = time(o.closes_at)
   return t !== null && t <= now
 }
 
-/** Masih boleh membuat kode bayar baru (belum masuk 5 menit terakhir sebelum order ditutup). */
+/** A new payment code may still be created (not yet in the last 5 minutes before the order closes). */
 export function canCreateNewCode(o: { closes_at: string | null }, now = Date.now()): boolean {
   const t = time(o.closes_at)
   return t === null || now < t - NO_NEW_CODE_BEFORE_CLOSE_MS
 }
 
-/** `payment.status` tetap `pending` sampai cron berjalan, jadi kedaluwarsa dihitung sendiri dari `expires_at`. */
+/** `payment.status` stays `pending` until the cron runs, so expiry is computed here from `expires_at`. */
 export function isPaymentExpired(p: { status: string; expires_at: string | null }, now = Date.now()): boolean {
   if (p.status === 'expired') return true
   const t = time(p.expires_at)
   return t !== null && t <= now
 }
 
-/** Batas bayar yang ditampilkan: mana yang lebih dulu, kode kedaluwarsa atau order ditutup. */
+/** Payment deadline shown: whichever comes first, the code expiring or the order closing. */
 export function payBefore(p: { expires_at: string | null } | null, o: { closes_at: string | null }): number | null {
   const a = time(p?.expires_at)
   const b = time(o.closes_at)

@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react'
 
-// Ikon garis 24×24 (gaya Lucide). Tambah ikon baru cukup dengan menambah entri di PATHS.
+// 24×24 line icons (Lucide style). To add a new icon, just add an entry to PATHS.
 const PATHS = {
   cart: 'M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 8H6.2M9.5 20.5h.01M17 20.5h.01',
   check: 'M20 6 9 17l-5-5',

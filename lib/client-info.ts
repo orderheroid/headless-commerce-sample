@@ -4,12 +4,12 @@ import { isIP } from 'node:net'
 
 import { headers } from 'next/headers'
 
-// IP dan user agent pembeli untuk `tracking.client_ip` / `tracking.client_user_agent` di POST /orders.
-// Kunci secret membuat semua order datang dari IP server toko, jadi OrderHero butuh IP pembeli untuk
-// batas per IP dan untuk pencocokan pixel iklan.
+// Buyer IP and user agent for `tracking.client_ip` / `tracking.client_user_agent` in POST /orders.
+// With a secret key every order comes from the store server's IP, so OrderHero needs the buyer IP for
+// per-IP limits and for ad pixel matching.
 //
-// Sumber IP hanya header yang diisi platform hosting: di Vercel, `x-real-ip` dan `x-forwarded-for`
-// ditulis ulang oleh proxy Vercel. IP lokal/privat (pengembangan) tidak dikirim.
+// The IP comes only from headers set by the hosting platform: on Vercel, `x-real-ip` and `x-forwarded-for`
+// are rewritten by the Vercel proxy. Local/private IPs (development) are not sent.
 
 function isPublicIp(ip: string): boolean {
   const v = isIP(ip)

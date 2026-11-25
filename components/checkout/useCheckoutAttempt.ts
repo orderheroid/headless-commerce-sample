@@ -4,10 +4,10 @@ import { useCallback, useEffect, useRef } from 'react'
 
 import { newUuid } from '@/lib/format'
 
-// Satu "percobaan checkout" = dua UUID di sessionStorage:
-// - Idempotency-Key  : dipakai ulang di setiap retry POST /orders
-// - external_reference: id order di toko ini, juga ref halaman /pesanan/{ref}
-// Keduanya baru diganti setelah order berhasil dibuat.
+// One "checkout attempt" = two UUIDs in sessionStorage:
+// - Idempotency-Key  : reused on every POST /orders retry
+// - external_reference: the order id in this store, also the ref of the /pesanan/{ref} page
+// Both are replaced only after the order is created successfully.
 
 const IDEM_KEY = 'toko:checkout:idempotency-key'
 const REF_KEY = 'toko:checkout:external-reference'
@@ -20,7 +20,7 @@ function readOrCreate(key: string): string {
     sessionStorage.setItem(key, value)
     return value
   } catch {
-    return newUuid() // sessionStorage diblokir: berlaku selama halaman terbuka
+    return newUuid() // sessionStorage blocked: valid while the page stays open
   }
 }
 
@@ -31,12 +31,12 @@ export function useCheckoutAttempt() {
     keys.current = { idempotencyKey: readOrCreate(IDEM_KEY), externalReference: readOrCreate(REF_KEY) }
   }, [])
 
-  /** Kunci untuk percobaan saat ini (null sebelum terpasang di browser). */
+  /** Keys for the current attempt (null before mounting in the browser). */
   const current = useCallback(() => keys.current, [])
 
   /**
-   * Ganti HANYA Idempotency-Key. Dipakai setelah server memastikan order dengan referensi ini belum ada;
-   * external_reference tetap, dan OrderHero menjaganya unik, jadi tidak mungkin terbuat order kedua.
+   * Replace ONLY the Idempotency-Key. Used after the server confirms no order with this reference exists yet;
+   * external_reference stays, and OrderHero keeps it unique, so a second order cannot be created.
    */
   const rotateIdempotencyKey = useCallback(() => {
     if (!keys.current) return
@@ -47,7 +47,7 @@ export function useCheckoutAttempt() {
     keys.current = { ...keys.current, idempotencyKey: value }
   }, [])
 
-  /** Order berhasil dibuat: percobaan berikutnya memakai pasangan UUID baru. */
+  /** Order created successfully: the next attempt uses a new pair of UUIDs. */
   const finish = useCallback(() => {
     try {
       sessionStorage.removeItem(IDEM_KEY)

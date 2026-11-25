@@ -5,8 +5,8 @@ import { useState } from 'react'
 import { Button } from './Button'
 import { Icon } from './Icon'
 
-/** Tombol salin ke clipboard dengan umpan balik "Tersalin". */
-export function CopyButton({ value, label = 'Salin' }: { value: string; label?: string }) {
+/** Copy-to-clipboard button with "Copied" feedback. */
+export function CopyButton({ value, label = 'Copy' }: { value: string; label?: string }) {
   const [copied, setCopied] = useState(false)
   return (
     <Button
@@ -19,13 +19,13 @@ export function CopyButton({ value, label = 'Salin' }: { value: string; label?: 
           setCopied(true)
           setTimeout(() => setCopied(false), 2000)
         } catch {
-          // clipboard ditolak browser: pembeli masih bisa menyalin manual
+          // clipboard denied by the browser: the buyer can still copy manually
         }
       }}
       aria-live="polite"
     >
       <Icon name={copied ? 'check' : 'copy'} className="h-4 w-4" />
-      {copied ? 'Tersalin' : label}
+      {copied ? 'Copied' : label}
     </Button>
   )
 }

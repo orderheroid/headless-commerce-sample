@@ -8,7 +8,7 @@ import { removeFromCart, setQuantity, type CartItem } from '@/lib/cart'
 export function CartSection({ items, disabled, step }: { items: CartItem[]; disabled?: boolean; step?: number }) {
   return (
     <Card>
-      <CardHeader step={step} title="Keranjang" description={`${items.length} produk`} />
+      <CardHeader step={step} title="Cart" description={`${items.length} ${items.length === 1 ? 'product' : 'products'}`} />
       <ul className="-my-3 divide-y divide-line-soft">
         {items.map((item) => (
           <li key={`${item.productId}:${item.variantId}`} className="flex gap-3 py-3">
@@ -31,10 +31,10 @@ export function CartSection({ items, disabled, step }: { items: CartItem[]; disa
                   onClick={() => removeFromCart(item.productId, item.variantId)}
                   disabled={disabled}
                   className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2 text-sm text-fg-subtle hover:bg-danger-soft hover:text-danger disabled:opacity-40"
-                  aria-label={`Hapus ${item.name}`}
+                  aria-label={`Remove ${item.name}`}
                 >
                   <Icon name="trash" className="h-4 w-4" />
-                  <span className="hidden sm:inline">Hapus</span>
+                  <span className="hidden sm:inline">Remove</span>
                 </button>
               </div>
             </div>

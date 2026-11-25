@@ -17,7 +17,7 @@ type Props = { params: Promise<{ slug: string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const product = await getProductDetail(slug).catch(() => null)
-  if (!product) return { title: 'Produk tidak ditemukan' }
+  if (!product) return { title: 'Product not found' }
   return { title: product.metaTitle, description: product.metaDescription ?? undefined }
 }
 
@@ -28,15 +28,15 @@ export default async function ProductPage({ params }: Props) {
   try {
     product = await getProductDetail(slug)
   } catch (err) {
-    return <Notice title="Produk belum bisa dimuat">{toFailure(err).message}</Notice>
+    return <Notice title="The product could not be loaded">{toFailure(err).message}</Notice>
   }
   if (!product) notFound()
 
   return (
-    // Ruang bawah di HP untuk bar "Tambah ke keranjang" yang menempel.
+    // Bottom space on mobile for the sticky "Add to cart" bar.
     <article className="pb-24 md:pb-0">
       <Link href="/" className="mb-4 inline-flex h-9 items-center gap-1.5 rounded-full pr-3 text-sm font-medium text-fg-muted hover:text-fg">
-        <Icon name="arrow-left" className="h-4 w-4" /> Semua produk
+        <Icon name="arrow-left" className="h-4 w-4" /> All products
       </Link>
 
       <div className="grid gap-6 md:grid-cols-2 md:items-start md:gap-12">
@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: Props) {
 
           {product.descriptionHtml && (
             <section className="border-t border-line pt-6">
-              <h2 className="mb-3 font-display text-2xl">Tentang produk ini</h2>
+              <h2 className="mb-3 font-display text-2xl">About this product</h2>
               <div className="prose-toko text-fg-muted" dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
             </section>
           )}

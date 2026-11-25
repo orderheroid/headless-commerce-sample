@@ -9,9 +9,9 @@ import { Icon } from './Icon'
 export type Choice = {
   value: string
   label: ReactNode
-  /** Teks kecil di bawah label. */
+  /** Small text below the label. */
   description?: ReactNode
-  /** Logo/gambar kecil di kiri (hanya layout `cards`). */
+  /** Small logo/image on the left (`cards` layout only). */
   image?: string | null
   disabled?: boolean
 }
@@ -23,11 +23,11 @@ type Props = {
   value: string | null
   onChange: (value: string) => void
   disabled?: boolean
-  /** `cards` = daftar bertumpuk (metode bayar); `chips` = tombol berjajar (varian). */
+  /** `cards` = stacked list (payment methods); `chips` = buttons in a row (variants). */
   layout?: 'cards' | 'chips'
 }
 
-/** Grup radio dengan tampilan kartu atau chip. Urutan pilihan dipertahankan apa adanya. */
+/** Radio group shown as cards or chips. The order of choices is kept as is. */
 export function ChoiceList({ name, label, choices, value, onChange, disabled, layout = 'cards' }: Props) {
   return (
     <div role="radiogroup" aria-label={label} className={layout === 'chips' ? 'flex flex-wrap gap-2' : 'grid gap-2'}>
@@ -45,7 +45,7 @@ export function ChoiceList({ name, label, choices, value, onChange, disabled, la
           >
             <input type="radio" name={name} value={c.value} checked={selected} disabled={disabled || c.disabled} onChange={() => onChange(c.value)} className="sr-only" />
             {layout === 'cards' && c.image !== undefined && (
-              // Logo bank/kanal dibuat untuk latar terang: tetap di kotak putih pada mode gelap.
+              // Bank/channel logos are made for light backgrounds: keep them in a white box in dark mode.
               <span className={cn('flex h-9 w-14 shrink-0 items-center justify-center rounded-lg', c.image && 'bg-white px-1.5')}>
                 {c.image && (
                   <img src={c.image} alt="" className="max-h-7 max-w-full object-contain" loading="lazy" />

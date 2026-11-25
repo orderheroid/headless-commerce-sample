@@ -1,6 +1,6 @@
 import { site } from '@/config/site'
 
-/** Tiga langkah membeli, dari config/site.ts. Blok biru penuh sebagai jeda visual. */
+/** Three steps to buy, from config/site.ts. A solid blue block as a visual break. */
 export function HowToBuy() {
   return (
     <section id="cara-beli" className="scroll-mt-24 overflow-hidden rounded-[2rem] bg-brand-600 px-6 py-10 text-white sm:px-10 sm:py-14">

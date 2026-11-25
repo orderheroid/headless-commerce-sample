@@ -1,92 +1,92 @@
-// Pesan untuk pembeli, dicocokkan dari kode `error` (kodenya stabil; `message` API boleh berubah).
+// Messages for the buyer, matched by `error` code (the codes are stable; the API `message` may change).
 
 const MESSAGES: Record<string, string> = {
-  // Konfigurasi toko: pembeli tidak bisa memperbaikinya sendiri
-  CONFIG_MISSING: 'Toko belum siap menerima pesanan. Silakan hubungi penjual.',
-  UNAUTHORIZED: 'Toko sedang tidak bisa diakses. Silakan hubungi penjual.',
-  SECRET_KEY_FROM_BROWSER: 'Toko sedang tidak bisa diakses. Silakan hubungi penjual.',
-  SCOPE_NOT_ALLOWED: 'Toko sedang tidak bisa diakses. Silakan hubungi penjual.',
-  KEY_CREATOR_REVOKED: 'Toko sedang tidak bisa diakses. Silakan hubungi penjual.',
-  FEATURE_NOT_AVAILABLE: 'Toko sedang tidak bisa diakses. Silakan hubungi penjual.',
-  QUOTA_EXCEEDED: 'Toko sedang tidak bisa menerima pesanan baru. Silakan hubungi penjual.',
+  // Store configuration: the buyer cannot fix this themselves
+  CONFIG_MISSING: 'The store is not ready to take orders yet. Please contact the seller.',
+  UNAUTHORIZED: 'The store is currently unavailable. Please contact the seller.',
+  SECRET_KEY_FROM_BROWSER: 'The store is currently unavailable. Please contact the seller.',
+  SCOPE_NOT_ALLOWED: 'The store is currently unavailable. Please contact the seller.',
+  KEY_CREATOR_REVOKED: 'The store is currently unavailable. Please contact the seller.',
+  FEATURE_NOT_AVAILABLE: 'The store is currently unavailable. Please contact the seller.',
+  QUOTA_EXCEEDED: 'The store cannot take new orders right now. Please contact the seller.',
 
-  // Sementara
-  RATE_LIMITED: 'Toko sedang ramai. Mohon tunggu sebentar lalu coba lagi.',
-  RATE_LIMITER_UNAVAILABLE: 'Layanan sedang sibuk. Coba lagi sebentar lagi.',
-  UPSTREAM_UNAVAILABLE: 'Layanan sedang terganggu. Coba lagi sebentar lagi.',
-  INTERNAL_ERROR: 'Terjadi gangguan di server. Coba lagi sebentar lagi.',
-  NETWORK_ERROR: 'Koneksi ke server terputus. Periksa internetmu lalu coba lagi.',
-  IDEMPOTENCY_IN_PROGRESS: 'Pesananmu masih diproses. Tunggu beberapa detik lalu tekan tombolnya lagi.',
+  // Temporary
+  RATE_LIMITED: 'The store is busy right now. Please wait a moment and try again.',
+  RATE_LIMITER_UNAVAILABLE: 'The service is busy. Try again in a moment.',
+  UPSTREAM_UNAVAILABLE: 'The service is having trouble. Try again in a moment.',
+  INTERNAL_ERROR: 'Something went wrong on the server. Try again in a moment.',
+  NETWORK_ERROR: 'The connection to the server was lost. Check your internet and try again.',
+  IDEMPOTENCY_IN_PROGRESS: 'Your order is still being processed. Wait a few seconds, then press the button again.',
   IDEMPOTENCY_OUTCOME_UNKNOWN:
-    'Kami belum bisa memastikan pesananmu sebelumnya. Tunggu sebentar lalu coba lagi; pesanan tidak akan dobel.',
-  IDEMPOTENCY_KEY_REUSED: 'Isi pesanan berubah. Tekan tombolnya sekali lagi untuk melanjutkan.',
+    'We could not confirm your previous order yet. Wait a moment and try again; your order will not be duplicated.',
+  IDEMPOTENCY_KEY_REUSED: 'Your order details changed. Press the button once more to continue.',
 
-  // Keranjang
-  ITEMS_REQUIRED: 'Keranjangmu masih kosong.',
-  TOO_MANY_ITEMS: 'Terlalu banyak produk dalam satu pesanan (maksimal 50).',
-  PRODUCT_NOT_FOUND: 'Ada produk di keranjang yang sudah tidak tersedia. Hapus lalu coba lagi.',
-  PRODUCT_INACTIVE: 'Ada produk di keranjang yang sedang tidak dijual. Hapus lalu coba lagi.',
-  VARIANT_NOT_FOUND: 'Varian yang dipilih sudah tidak tersedia. Pilih ulang dari halaman produk.',
-  VARIANT_REQUIRED: 'Produk ini punya varian. Pilih variannya dulu dari halaman produk.',
-  INVALID_QUANTITY: 'Jumlah harus antara 1 sampai 100.',
-  PRICE_UNAVAILABLE: 'Harga produk ini belum tersedia. Silakan hubungi penjual.',
-  PWYW_NOT_SUPPORTED: 'Ada produk berharga bebas di keranjang. Hapus dari keranjang, lalu beli lewat tombol di halaman produknya.',
-  OUT_OF_STOCK: 'Stok tidak cukup. Kurangi jumlahnya lalu coba lagi.',
-  LICENSE_KEYS_UNAVAILABLE: 'Stok produk ini sedang habis. Coba lagi nanti.',
-  DIGITAL_CONTENT_TYPE_REQUIRED: 'Produk ini belum siap dijual. Silakan hubungi penjual.',
-  DIGITAL_CONTENT_REQUIRED: 'Produk ini belum siap dijual. Silakan hubungi penjual.',
-  SHIPPING_ADDRESS_REQUIRED: 'Toko ini hanya melayani produk digital. Hapus produk fisik dari keranjang.',
+  // Cart
+  ITEMS_REQUIRED: 'Your cart is empty.',
+  TOO_MANY_ITEMS: 'Too many products in one order (maximum 50).',
+  PRODUCT_NOT_FOUND: 'A product in your cart is no longer available. Remove it and try again.',
+  PRODUCT_INACTIVE: 'A product in your cart is not for sale right now. Remove it and try again.',
+  VARIANT_NOT_FOUND: 'The selected variant is no longer available. Choose again from the product page.',
+  VARIANT_REQUIRED: 'This product has variants. Choose one from the product page first.',
+  INVALID_QUANTITY: 'Quantity must be between 1 and 100.',
+  PRICE_UNAVAILABLE: 'The price for this product is not available yet. Please contact the seller.',
+  PWYW_NOT_SUPPORTED: 'There is a pay-what-you-want product in your cart. Remove it from the cart, then buy it using the button on its product page.',
+  OUT_OF_STOCK: 'Not enough stock. Reduce the quantity and try again.',
+  LICENSE_KEYS_UNAVAILABLE: 'This product is out of stock right now. Try again later.',
+  DIGITAL_CONTENT_TYPE_REQUIRED: 'This product is not ready for sale yet. Please contact the seller.',
+  DIGITAL_CONTENT_REQUIRED: 'This product is not ready for sale yet. Please contact the seller.',
+  SHIPPING_ADDRESS_REQUIRED: 'This store only sells digital products. Remove physical products from your cart.',
 
-  // Kupon
-  COUPON_INVALID: 'Kode kupon tidak berlaku untuk pesanan ini.',
-  COUPON_LIMIT_REACHED: 'Kuota kupon baru saja habis. Total dihitung ulang tanpa kupon.',
+  // Coupon
+  COUPON_INVALID: 'This coupon code is not valid for this order.',
+  COUPON_LIMIT_REACHED: 'The coupon has just run out. The total was recalculated without the coupon.',
 
-  // Pembeli
-  CUSTOMER_NAME_REQUIRED: 'Nama wajib diisi.',
-  CUSTOMER_CONTACT_REQUIRED: 'Email dan nomor WhatsApp wajib diisi.',
-  INVALID_EMAIL: 'Format email belum benar.',
-  INVALID_INPUT: 'Ada isian yang memuat karakter tidak diizinkan. Periksa lagi isianmu.',
+  // Buyer
+  CUSTOMER_NAME_REQUIRED: 'Name is required.',
+  CUSTOMER_CONTACT_REQUIRED: 'Email and WhatsApp number are required.',
+  INVALID_EMAIL: 'The email format is not valid.',
+  INVALID_INPUT: 'A field contains characters that are not allowed. Please check what you entered.',
 
-  // Pembayaran
-  PAYMENT_METHOD_REQUIRED: 'Pilih metode pembayaran dulu.',
-  PAYMENT_METHOD_UNAVAILABLE: 'Metode pembayaran itu sedang tidak tersedia. Pilih metode lain.',
-  CHANNEL_NOT_SUPPORTED: 'Metode pembayaran itu sedang tidak tersedia. Pilih metode lain.',
-  CHANNEL_UNDER_MAINTENANCE: 'Metode pembayaran itu sedang dalam pemeliharaan. Pilih metode lain.',
-  GATEWAY_NOT_CONFIGURED: 'Metode pembayaran itu sedang tidak tersedia. Pilih metode lain.',
-  DOKU_CHECKOUT_DISABLED: 'Metode pembayaran itu sedang tidak tersedia. Pilih metode lain.',
-  AMOUNT_BELOW_MINIMUM: 'Total pesanan di bawah batas minimum metode pembayaran ini. Pilih metode lain.',
-  PAYMENT_CREATE_FAILED: 'Kode pembayaran gagal dibuat. Coba lagi atau pilih metode lain.',
-  MAX_PAYMENT_ATTEMPTS: 'Kode pembayaran sudah terlalu sering dibuat ulang hari ini. Gunakan kode yang terakhir atau coba lagi besok.',
-  ALREADY_PAID: 'Pesanan ini sudah lunas. Tidak perlu membayar lagi.',
-  ORDER_CANCELLED: 'Pesanan ini sudah dibatalkan. Silakan buat pesanan baru.',
-  ORDER_CLOSED: 'Batas waktu pesanan ini sudah lewat. Silakan buat pesanan baru.',
+  // Payment
+  PAYMENT_METHOD_REQUIRED: 'Choose a payment method first.',
+  PAYMENT_METHOD_UNAVAILABLE: 'That payment method is not available right now. Choose another method.',
+  CHANNEL_NOT_SUPPORTED: 'That payment method is not available right now. Choose another method.',
+  CHANNEL_UNDER_MAINTENANCE: 'That payment method is under maintenance. Choose another method.',
+  GATEWAY_NOT_CONFIGURED: 'That payment method is not available right now. Choose another method.',
+  DOKU_CHECKOUT_DISABLED: 'That payment method is not available right now. Choose another method.',
+  AMOUNT_BELOW_MINIMUM: 'The order total is below the minimum for this payment method. Choose another method.',
+  PAYMENT_CREATE_FAILED: 'The payment code could not be created. Try again or choose another method.',
+  MAX_PAYMENT_ATTEMPTS: 'The payment code has been regenerated too many times today. Use the latest code or try again tomorrow.',
+  ALREADY_PAID: 'This order is already paid. You do not need to pay again.',
+  ORDER_CANCELLED: 'This order has been cancelled. Please place a new order.',
+  ORDER_CLOSED: 'The deadline for this order has passed. Please place a new order.',
 
   // Order
-  // Konfirmasi transfer manual
-  NOT_MANUAL_TRANSFER: 'Pesanan ini tidak dibayar lewat transfer manual; statusnya diperbarui otomatis.',
-  SENDER_NAME_REQUIRED: 'Isi nama pemilik rekening pengirim.',
-  PROOF_FILE_INVALID: 'Bukti transfer harus berupa JPG, PNG, WebP, atau PDF.',
-  PROOF_FILE_TOO_LARGE: 'Ukuran bukti transfer terlalu besar (maksimal 4 MB).',
-  PAYLOAD_TOO_LARGE: 'Ukuran bukti transfer terlalu besar (maksimal 4 MB).',
-  PROOF_UPLOAD_FAILED: 'Bukti gagal diunggah dan konfirmasi belum tercatat. Coba kirim lagi.',
-  CONFIRMATION_PENDING: 'Konfirmasimu sudah kami terima dan sedang menunggu verifikasi.',
-  CONFIRMATION_ALREADY_VERIFIED: 'Pembayaran pesanan ini sudah diverifikasi.',
+  // Manual transfer confirmation
+  NOT_MANUAL_TRANSFER: 'This order is not paid by manual transfer; its status updates automatically.',
+  SENDER_NAME_REQUIRED: 'Enter the name of the sending account holder.',
+  PROOF_FILE_INVALID: 'Proof of transfer must be a JPG, PNG, WebP, or PDF file.',
+  PROOF_FILE_TOO_LARGE: 'The proof of transfer file is too large (maximum 4 MB).',
+  PAYLOAD_TOO_LARGE: 'The proof of transfer file is too large (maximum 4 MB).',
+  PROOF_UPLOAD_FAILED: 'The proof could not be uploaded and the confirmation was not recorded. Try sending it again.',
+  CONFIRMATION_PENDING: 'We have received your confirmation and it is awaiting verification.',
+  CONFIRMATION_ALREADY_VERIFIED: 'Payment for this order has already been verified.',
 
-  ORDER_NOT_FOUND: 'Pesanan tidak ditemukan.',
-  NOT_FOUND: 'Data tidak ditemukan.',
-  INVALID_REFERENCE: 'Tautan pesanan tidak valid.',
-  INVALID_RETURN_URL: 'Toko belum siap menerima pesanan. Silakan hubungi penjual.',
-  INVALID_STATUS_URL: 'Toko belum siap menerima pesanan. Silakan hubungi penjual.',
-  INVALID_EXPIRES_IN: 'Toko belum siap menerima pesanan. Silakan hubungi penjual.',
+  ORDER_NOT_FOUND: 'Order not found.',
+  NOT_FOUND: 'Data not found.',
+  INVALID_REFERENCE: 'The order link is not valid.',
+  INVALID_RETURN_URL: 'The store is not ready to take orders yet. Please contact the seller.',
+  INVALID_STATUS_URL: 'The store is not ready to take orders yet. Please contact the seller.',
+  INVALID_EXPIRES_IN: 'The store is not ready to take orders yet. Please contact the seller.',
 }
 
-const FALLBACK = 'Terjadi kesalahan. Coba lagi sebentar lagi.'
+const FALLBACK = 'Something went wrong. Try again in a moment.'
 
 export function buyerMessage(code: string, extra?: Record<string, unknown>): string {
   if (code === 'OUT_OF_STOCK' && typeof extra?.available === 'number') {
     return extra.available > 0
-      ? `Stok tidak cukup, tersisa ${extra.available}. Kurangi jumlahnya lalu coba lagi.`
-      : 'Maaf, stok produk ini sudah habis.'
+      ? `Not enough stock, only ${extra.available} left. Reduce the quantity and try again.`
+      : 'Sorry, this product is out of stock.'
   }
   return MESSAGES[code] ?? FALLBACK
 }

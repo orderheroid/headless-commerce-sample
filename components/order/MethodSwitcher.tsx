@@ -9,20 +9,20 @@ export type MethodOption = {
   label: string
   image: string | null
   category: string
-  /** Rekening tujuan; hanya untuk transfer manual. */
+  /** Destination account; manual transfer only. */
   bank?: { name: string; accountNumber: string; holder: string } | null
 }
 
 type Props = {
   methods: MethodOption[]
   current: string | null
-  /** Boleh memilih metode yang sama (mis. kode lama sudah kedaluwarsa). */
+  /** The same method may be chosen (e.g. the old code has expired). */
   allowSame: boolean
   busy: boolean
   onConfirm: (code: string) => Promise<boolean>
 }
 
-/** "Ganti metode pembayaran": daftar metode apa adanya dari API, lalu buat kode bayar baru. */
+/** "Change payment method": method list as is from the API, then create a new payment code. */
 export function MethodSwitcher({ methods, current, allowSame, busy, onConfirm }: Props) {
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState(current ?? methods[0]?.code ?? '')
@@ -37,26 +37,26 @@ export function MethodSwitcher({ methods, current, allowSame, busy, onConfirm }:
           setOpen(true)
         }}
       >
-        Ganti metode pembayaran
+        Change payment method
       </Button>
     )
   }
 
   return (
     <div className="space-y-3 border-t border-line-soft pt-4">
-      <p className="text-sm font-medium text-fg">Pilih metode lain</p>
+      <p className="text-sm font-medium text-fg">Choose another method</p>
       <ChoiceList
         name="ganti_metode"
-        label="Metode pembayaran"
+        label="Payment method"
         value={selected}
         onChange={setSelected}
         disabled={busy}
         choices={methods.map((m) => ({ value: m.code, label: m.label, image: m.image }))}
       />
-      <p className="text-xs text-fg-subtle">Total bisa berubah mengikuti metode yang dipilih; angka akhirnya tampil setelah kode dibuat.</p>
+      <p className="text-xs text-fg-subtle">The total may change with the method you choose; the final amount is shown once the code is created.</p>
       <div className="grid grid-cols-2 gap-2">
         <Button variant="secondary" size="lg" disabled={busy} onClick={() => setOpen(false)}>
-          Batal
+          Cancel
         </Button>
         <Button
           size="lg"
@@ -65,7 +65,7 @@ export function MethodSwitcher({ methods, current, allowSame, busy, onConfirm }:
             if (await onConfirm(selected)) setOpen(false)
           }}
         >
-          {busy ? 'Membuat kode…' : 'Gunakan'}
+          {busy ? 'Creating code…' : 'Use this method'}
         </Button>
       </div>
     </div>

@@ -6,7 +6,7 @@ import { site } from '@/config/site'
 
 import { getStoreName } from './orderhero'
 
-/** Nama toko dari GET /meta (di-cache 1 jam), dengan cadangan dari config/site.ts. */
+/** Store name from GET /meta (cached for 1 hour), with a fallback from config/site.ts. */
 export const storeName = cache(async (): Promise<string> => {
   try {
     return (await getStoreName()) || site.fallbackName

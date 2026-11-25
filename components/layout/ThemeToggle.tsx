@@ -14,20 +14,20 @@ function apply(theme: Theme) {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLOR[theme])
 }
 
-/** Berlangganan perubahan atribut data-theme di <html>. */
+/** Subscribes to changes of the data-theme attribute on <html>. */
 function subscribeTheme(onChange: () => void) {
   const observer = new MutationObserver(onChange)
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
   return () => observer.disconnect()
 }
 
-/** Tombol terang/gelap di header. Tema awal sudah dipasang skrip di <head> (lib/theme.ts). */
+/** Light/dark toggle in the header. The initial theme is already set by the script in <head> (lib/theme.ts). */
 export function ThemeToggle() {
-  // null saat render server: ikon baru ditentukan setelah terpasang di browser.
+  // null during server render: the icon is only decided after mounting in the browser.
   const theme = useSyncExternalStore<Theme | null>(subscribeTheme, currentTheme, () => null)
 
   useEffect(() => {
-    // Tanpa pilihan tersimpan, ikuti perubahan pengaturan perangkat secara langsung.
+    // With no saved choice, follow device setting changes live.
     const media = matchMedia('(prefers-color-scheme: dark)')
     const onChange = (e: MediaQueryListEvent) => {
       let saved: string | null = null
@@ -53,11 +53,11 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={dark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
-      title={dark ? 'Mode terang' : 'Mode gelap'}
+      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={dark ? 'Light mode' : 'Dark mode'}
       className="relative flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
     >
-      {/* Kedua ikon dirender; yang aktif muncul dengan putaran halus. */}
+      {/* Both icons are rendered; the active one appears with a smooth rotation. */}
       <SunIcon className={cn('absolute h-5 w-5 transition-all duration-300', dark ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-50 opacity-0')} />
       <MoonIcon className={cn('absolute h-5 w-5 transition-all duration-300', dark ? 'rotate-90 scale-50 opacity-0' : 'rotate-0 scale-100 opacity-100')} />
     </button>

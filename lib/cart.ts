@@ -5,8 +5,8 @@ import { useSyncExternalStore } from 'react'
 import { useMounted } from './hooks'
 import type { CartLine } from './types'
 
-// Keranjang di localStorage. Tidak menyimpan harga: semua angka di checkout berasal dari
-// POST /checkout/quote. Nama dan gambar disimpan hanya untuk tampilan.
+// Cart in localStorage. Stores no prices: every number at checkout comes from
+// POST /checkout/quote. Name and image are stored for display only.
 
 export type CartItem = {
   productId: string
@@ -44,7 +44,7 @@ function read(): CartItem[] {
   try {
     raw = window.localStorage.getItem(STORAGE_KEY)
   } catch {
-    // localStorage diblokir (mode privat tertentu): keranjang dianggap kosong
+    // localStorage is blocked (some private modes): treat the cart as empty
   }
   if (raw !== cachedRaw) {
     cachedRaw = raw
@@ -55,7 +55,7 @@ function read(): CartItem[] {
 
 function subscribe(onChange: () => void) {
   window.addEventListener(CHANGE_EVENT, onChange)
-  window.addEventListener('storage', onChange) // perubahan dari tab lain
+  window.addEventListener('storage', onChange) // changes from other tabs
   return () => {
     window.removeEventListener(CHANGE_EVENT, onChange)
     window.removeEventListener('storage', onChange)
@@ -66,7 +66,7 @@ function write(items: CartItem[]) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   } catch {
-    // abaikan
+    // ignore
   }
   window.dispatchEvent(new Event(CHANGE_EVENT))
 }
@@ -74,7 +74,7 @@ function write(items: CartItem[]) {
 const sameLine = (a: CartItem, productId: string, variantId: string | null) => a.productId === productId && a.variantId === variantId
 const clampQty = (q: number) => Math.max(1, Math.min(MAX_QTY, Math.trunc(q) || 1))
 
-// ---------------------------------------------------------------- aksi
+// ---------------------------------------------------------------- actions
 
 export function addToCart(item: CartItem) {
   const items = read()
@@ -98,18 +98,18 @@ export function clearCart() {
   write([])
 }
 
-// ---------------------------------------------------------------- baca
+// ---------------------------------------------------------------- read
 
 export function cartCount(items: CartItem[]): number {
   return items.reduce((sum, i) => sum + i.quantity, 0)
 }
 
-/** Bentuk `items[]` untuk quote dan order. Tanpa harga. */
+/** The `items[]` shape for quote and order. No prices. */
 export function toCartLines(items: CartItem[]): CartLine[] {
   return items.map((i) => ({ product_id: i.productId, quantity: i.quantity, ...(i.variantId ? { variant_id: i.variantId } : {}) }))
 }
 
-/** `ready` false selama render server/hidrasi, supaya "keranjang kosong" tidak berkedip. */
+/** `ready` is false during server render/hydration, so "cart is empty" does not flash. */
 export function useCart(): { items: CartItem[]; ready: boolean } {
   const items = useSyncExternalStore(subscribe, read, () => EMPTY)
   return { items, ready: useMounted() }

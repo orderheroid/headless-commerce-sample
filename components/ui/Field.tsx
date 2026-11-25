@@ -13,11 +13,11 @@ export const inputClass = cn(
 type FieldProps = ComponentProps<'input'> & {
   label: string
   hint?: string
-  /** Pesan galat; field ditandai merah dan dibacakan pembaca layar. */
+  /** Error message; the field is marked red and announced by screen readers. */
   error?: string | null
 }
 
-/** Input berlabel dengan petunjuk dan pesan galat. */
+/** Labeled input with a hint and error message. */
 export function Field({ label, hint, error, className, id, ...props }: FieldProps) {
   const autoId = useId()
   const inputId = id ?? autoId

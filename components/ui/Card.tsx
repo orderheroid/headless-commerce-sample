@@ -6,7 +6,7 @@ export function Card({ className, ...props }: ComponentProps<'section'>) {
   return <section className={cn('rounded-3xl border border-line bg-surface p-5 sm:p-6', className)} {...props} />
 }
 
-/** Judul bagian kartu, dengan nomor langkah opsional bergaya editorial ("01", "02"). */
+/** Card section title, with an optional editorial-style step number ("01", "02"). */
 export function CardHeader({ title, description, step, action }: { title: ReactNode; description?: ReactNode; step?: number; action?: ReactNode }) {
   return (
     <div className="mb-5 flex items-start gap-3">

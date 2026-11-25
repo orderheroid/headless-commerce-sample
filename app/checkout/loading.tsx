@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui'
 
 export default function Loading() {
   return (
-    <div aria-label="Memuat checkout">
+    <div aria-label="Loading checkout">
       <Skeleton className="mb-5 h-8 w-40" />
       <div className="grid gap-4 md:grid-cols-[1fr_380px] md:gap-6">
         <div className="grid gap-4">

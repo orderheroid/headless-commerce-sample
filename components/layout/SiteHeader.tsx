@@ -10,7 +10,7 @@ export function SiteHeader({ storeName }: { storeName: string }) {
         <Link
           href="/"
           className="flex min-w-0 items-baseline gap-1.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-          aria-label={`${storeName}, beranda`}
+          aria-label={`${storeName}, home page`}
         >
           <span className="truncate font-display text-xl leading-none text-fg sm:text-2xl">{storeName}</span>
           <span className="h-2 w-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />

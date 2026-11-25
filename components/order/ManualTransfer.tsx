@@ -13,7 +13,7 @@ import type { MethodOption } from './MethodSwitcher'
 type Props = {
   reference: string
   order: PublicOrderStatus
-  /** Rekening tujuan dari GET /checkout/payment-methods (kategori MANUAL_TRANSFER). */
+  /** Destination account from GET /checkout/payment-methods (MANUAL_TRANSFER category). */
   bank: NonNullable<MethodOption['bank']>
   onUpdated: (order: PublicOrderStatus) => void
 }
@@ -21,8 +21,8 @@ type Props = {
 const MAX_MB = Math.floor(orderStatusConfig.proofMaxBytes / (1024 * 1024))
 
 /**
- * Transfer bank manual: rekening tujuan, jumlah persis (termasuk kode unik), lalu "Saya sudah transfer".
- * Order baru lunas setelah merchant memverifikasinya di dashboard, yang bisa memakan waktu berjam-jam.
+ * Manual bank transfer: destination account, exact amount (including the unique code), then "I've made the transfer".
+ * The order is only paid once the merchant verifies it in the dashboard, which can take hours.
  */
 export function ManualTransfer({ reference, order, bank, onUpdated }: Props) {
   const [senderName, setSenderName] = useState('')
@@ -37,7 +37,7 @@ export function ManualTransfer({ reference, order, bank, onUpdated }: Props) {
     e.preventDefault()
     if (busy || fileTooBig) return
     if (senderName.trim().length < 2) {
-      setError('Isi nama pemilik rekening pengirim.')
+      setError('Enter the name of the sending account holder.')
       return
     }
     setBusy(true)
@@ -51,7 +51,7 @@ export function ManualTransfer({ reference, order, bank, onUpdated }: Props) {
       if (result.ok) onUpdated(result.order)
       else setError(result.message)
     } catch {
-      setError('Koneksi terputus. Periksa internetmu lalu kirim lagi.')
+      setError('Connection lost. Check your internet and send again.')
     }
     setBusy(false)
   }
@@ -60,35 +60,35 @@ export function ManualTransfer({ reference, order, bank, onUpdated }: Props) {
     <div className="space-y-5">
       <dl className="divide-y divide-line-soft rounded-2xl border border-line bg-subtle">
         <Row label="Bank" value={bank.name} />
-        <Row label="Nomor rekening" value={bank.accountNumber} mono copy />
-        <Row label="Atas nama" value={bank.holder} />
-        <Row label="Jumlah transfer" value={rupiah(order.total)} copyValue={String(order.total)} strong />
+        <Row label="Account number" value={bank.accountNumber} mono copy />
+        <Row label="Account holder" value={bank.holder} />
+        <Row label="Transfer amount" value={rupiah(order.total)} copyValue={String(order.total)} strong />
       </dl>
 
-      <Notice tone="info" title="Transfer persis sejumlah itu">
+      <Notice tone="info" title="Transfer exactly that amount">
         {order.unique_code > 0
-          ? 'Jumlahnya sudah termasuk kode unik di tiga digit terakhir. Kode itulah yang dipakai penjual untuk mengenali transfermu, jadi jangan dibulatkan.'
-          : 'Jumlah yang berbeda bisa membuat pembayaranmu lama dikenali.'}
+          ? 'The amount already includes a unique code in the last three digits. The seller uses that code to identify your transfer, so do not round it.'
+          : 'A different amount can delay your payment being identified.'}
       </Notice>
 
       {confirmation?.status === 'pending' ? (
-        <Notice tone="success" title="Konfirmasi diterima, menunggu verifikasi">
-          Penjual akan memeriksa transfermu. Proses ini manual dan bisa memakan waktu beberapa jam. Halaman ini berubah otomatis setelah
-          pembayaran diverifikasi; kamu juga akan menerima email dan WhatsApp.
+        <Notice tone="success" title="Confirmation received, awaiting verification">
+          The seller will check your transfer. This is a manual process and can take a few hours. This page updates automatically once
+          the payment is verified; you will also get an email and a WhatsApp message.
         </Notice>
       ) : (
         <form onSubmit={submit} noValidate className="space-y-4 border-t border-line-soft pt-5">
           <div>
-            <p className="font-semibold">Sudah transfer?</p>
-            <p className="mt-0.5 text-sm text-fg-subtle">Kabari penjual supaya pembayaranmu cepat diverifikasi.</p>
+            <p className="font-semibold">Already transferred?</p>
+            <p className="mt-0.5 text-sm text-fg-subtle">Let the seller know so your payment is verified quickly.</p>
           </div>
 
           {confirmation?.status === 'rejected' && (
-            <Notice title="Konfirmasi sebelumnya ditolak">{confirmation.rejection_reason || 'Periksa lagi transfermu, lalu kirim konfirmasi baru.'}</Notice>
+            <Notice title="Previous confirmation rejected">{confirmation.rejection_reason || 'Check your transfer again, then send a new confirmation.'}</Notice>
           )}
 
           <Field
-            label="Nama pemilik rekening pengirim"
+            label="Sending account holder name"
             autoComplete="name"
             maxLength={100}
             value={senderName}
@@ -98,7 +98,7 @@ export function ManualTransfer({ reference, order, bank, onUpdated }: Props) {
 
           <div>
             <label htmlFor="proof" className="mb-1.5 block text-sm font-medium text-fg">
-              Bukti transfer <span className="font-normal text-fg-subtle">(opsional)</span>
+              Proof of transfer <span className="font-normal text-fg-subtle">(optional)</span>
             </label>
             <input
               id="proof"
@@ -109,14 +109,14 @@ export function ManualTransfer({ reference, order, bank, onUpdated }: Props) {
               className="block w-full text-sm text-fg-muted file:mr-3 file:h-11 file:cursor-pointer file:rounded-full file:border file:border-solid file:border-line-strong file:bg-surface file:px-4 file:text-sm file:font-semibold file:text-fg"
             />
             <p className={fileTooBig ? 'mt-1.5 text-sm text-danger' : 'mt-1.5 text-sm text-fg-subtle'}>
-              {fileTooBig ? `Berkas terlalu besar. Maksimal ${MAX_MB} MB.` : `JPG, PNG, WebP, atau PDF. Maksimal ${MAX_MB} MB.`}
+              {fileTooBig ? `File is too large. Maximum ${MAX_MB} MB.` : `JPG, PNG, WebP, or PDF. Maximum ${MAX_MB} MB.`}
             </p>
           </div>
 
           {error && <Notice>{error}</Notice>}
 
           <Button type="submit" size="lg" block disabled={busy || fileTooBig}>
-            {busy ? 'Mengirim…' : 'Saya sudah transfer'}
+            {busy ? 'Sending…' : "I've made the transfer"}
           </Button>
         </form>
       )}

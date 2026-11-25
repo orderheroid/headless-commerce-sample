@@ -5,7 +5,7 @@ import type { PublicOrderStatus } from '@/lib/types'
 export function OrderItems({ order }: { order: PublicOrderStatus }) {
   return (
     <Card>
-      <CardHeader title="Rincian pesanan" />
+      <CardHeader title="Order details" />
       <dl className="space-y-2 text-sm">
         {order.items.map((item, i) => (
           <div key={i} className="flex justify-between gap-3">

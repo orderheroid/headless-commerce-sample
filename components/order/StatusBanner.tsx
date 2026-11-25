@@ -7,57 +7,57 @@ const VIEWS: Record<StatusView, { icon: IconName; tone: string; title: string; b
   awaiting_payment: {
     icon: 'clock',
     tone: 'bg-accent-soft text-accent-strong',
-    title: 'Menunggu pembayaran',
-    body: 'Selesaikan pembayaran di bawah. Halaman ini diperbarui otomatis begitu pembayaranmu masuk.',
+    title: 'Awaiting payment',
+    body: 'Complete your payment below. This page updates automatically as soon as your payment arrives.',
   },
   awaiting_verification: {
     icon: 'clock',
     tone: 'bg-accent-soft text-accent-strong',
-    title: 'Menunggu verifikasi penjual',
-    body: 'Konfirmasi transfermu sudah diterima. Verifikasi dilakukan manual oleh penjual dan bisa memakan waktu beberapa jam.',
+    title: 'Awaiting seller verification',
+    body: 'Your transfer confirmation has been received. The seller verifies it manually, which can take a few hours.',
   },
   delivering: {
     icon: 'check-circle',
     tone: 'bg-success-soft text-success',
-    title: 'Pembayaran diterima',
+    title: 'Payment received',
     body: (
       <>
-        Produkmu sedang dikirim ke <strong>email</strong> dan <strong>WhatsApp</strong> yang kamu isi saat memesan, biasanya dalam beberapa menit.
+        Your product is being sent to the <strong>email</strong> and <strong>WhatsApp</strong> you entered when ordering, usually within a few minutes.
       </>
     ),
   },
   delivered: {
     icon: 'check-circle',
     tone: 'bg-success-soft text-success',
-    title: 'Pembayaran diterima, produk sudah dikirim',
+    title: 'Payment received, product sent',
     body: (
       <>
-        Cek <strong>email</strong> dan <strong>WhatsApp</strong> yang kamu isi saat memesan. Bila belum terlihat, periksa juga folder spam atau promosi.
+        Check the <strong>email</strong> and <strong>WhatsApp</strong> you entered when ordering. If you do not see it, check your spam or promotions folder too.
       </>
     ),
   },
   delivery_delayed: {
     icon: 'alert',
     tone: 'bg-warning-soft text-warning',
-    title: 'Pembayaran diterima, pengiriman tertunda',
+    title: 'Payment received, delivery delayed',
     body: (
       <>
-        Pengiriman produkmu masih diproses. Cek <strong>email</strong> dan <strong>WhatsApp</strong> (termasuk folder spam). Bila belum masuk juga,
-        hubungi toko dengan menyebutkan nomor pesanan di atas.
+        Your product delivery is still being processed. Check your <strong>email</strong> and <strong>WhatsApp</strong> (including the spam folder). If it still has not arrived,
+        contact the store and mention the order number above.
       </>
     ),
   },
   paid_no_delivery: {
     icon: 'check-circle',
     tone: 'bg-success-soft text-success',
-    title: 'Pembayaran diterima',
-    body: 'Terima kasih! Pesananmu sudah kami terima.',
+    title: 'Payment received',
+    body: 'Thank you! We have received your order.',
   },
   closed: {
     icon: 'info',
     tone: 'bg-muted text-fg',
-    title: 'Pesanan ditutup',
-    body: 'Batas waktu pembayaran sudah lewat atau pesanan dibatalkan. Tidak perlu membayar pesanan ini; silakan buat pesanan baru bila masih ingin membeli.',
+    title: 'Order closed',
+    body: 'The payment deadline has passed or the order was cancelled. There is no need to pay for this order; please place a new order if you still want to buy.',
   },
 }
 

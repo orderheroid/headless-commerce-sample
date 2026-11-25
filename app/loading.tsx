@@ -1,9 +1,9 @@
 import { Skeleton } from '@/components/ui'
 
-/** Kerangka beranda selama data katalog dimuat. */
+/** Home page skeleton while catalog data loads. */
 export default function Loading() {
   return (
-    <div className="space-y-12" aria-label="Memuat">
+    <div className="space-y-12" aria-label="Loading">
       <Skeleton className="h-80 rounded-3xl" />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
         {Array.from({ length: 8 }, (_, i) => (

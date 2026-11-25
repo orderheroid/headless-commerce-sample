@@ -1,4 +1,4 @@
-// Komponen dasar. Ubah tampilan tombol, kartu, field, dll. di sini, bukan di tiap halaman.
+// Base components. Change the look of buttons, cards, fields, etc. here, not on each page.
 export { Button, ButtonLink, buttonClass } from './Button'
 export { Card, CardHeader } from './Card'
 export { ChoiceList, type Choice } from './ChoiceList'

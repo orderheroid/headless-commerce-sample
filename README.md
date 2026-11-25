@@ -1,83 +1,89 @@
-# Toko Headless OrderHero (contoh)
+# OrderHero Headless Store (sample)
 
-Toko online produk digital dengan **OrderHero Headless Commerce API v1** sebagai satu-satunya backend.
-Next.js App Router, TypeScript, Tailwind v4. Tanpa database, tanpa webhook.
+An online store for digital products with the **OrderHero Headless Commerce API v1** as its only backend.
+Next.js App Router, TypeScript, Tailwind v4. No database, no webhooks.
 
-## Menjalankan
+## Getting started
 
 ```bash
-cp .env.example .env.local   # isi ORDERHERO_SECRET_KEY (ohsk_live_…)
+cp .env.example .env.local   # set ORDERHERO_SECRET_KEY (ohsk_live_…)
 npm install
 npm run dev
 ```
 
-Butuh Node 20.9 atau lebih baru.
+Requires Node 20.9 or newer.
 
-| Perintah | Guna |
+| Command | Purpose |
 | --- | --- |
-| `npm run dev` | server pengembangan |
-| `npm run check` | lint + type check + test (jalankan sebelum commit; CI menjalankan yang sama) |
-| `npm run build` | build produksi |
+| `npm run dev` | development server |
+| `npm run check` | lint + type check + tests (run before committing; CI runs the same) |
+| `npm run build` | production build |
 
-| Env | Wajib | Keterangan |
+| Env | Required | Notes |
 | --- | --- | --- |
-| `ORDERHERO_SECRET_KEY` | ya | Kunci secret. Scope cukup `catalog:read` + `checkout:write`. Hanya di server. |
-| `ORDERHERO_API_URL` | tidak | Bawaan `https://api.orderhero.id/v1`. Wajib https. |
-| `SITE_URL` | di luar Vercel | Alamat toko (https). Dipakai untuk tautan status di WA/email OrderHero. |
+| `ORDERHERO_SECRET_KEY` | yes | Secret key. The `catalog:read` + `checkout:write` scopes are enough. Server only. |
+| `ORDERHERO_API_URL` | no | Defaults to `https://api.orderhero.id/v1`. Must be https. |
+| `SITE_URL` | outside Vercel | Store address (https). Used for the status links in OrderHero's WhatsApp/email messages. |
 
-> Tidak ada mode test di API v1: setiap order adalah order sungguhan.
+> API v1 has no test mode: every order is a real order.
 
-## Batasan contoh ini
+## Limitations of this sample
 
-- Hanya produk **digital** (tanpa alamat dan ongkir).
-- Produk harga bebas (bayar sesukanya) diarahkan ke form order OrderHero, karena API tidak menerima harga dari klien.
-- Tanpa captcha: perlindungan spam mengandalkan batas per pembeli dari OrderHero. Tambahkan rate limit di hosting.
-- Headless Commerce masih beta dan khusus paket Enterprise.
+- **Digital** products only (no address or shipping).
+- Pay-what-you-want products are sent to the OrderHero order form, because the API does not accept prices from the client.
+- No captcha: spam protection relies on OrderHero's per-buyer limits. Add rate limiting at your hosting layer.
+- Headless Commerce is still in beta and limited to the Enterprise plan.
 
-## Mengubah tampilan dan isi
+## Changing the look and content
 
-| Ingin mengubah | Buka |
+| To change | Open |
 | --- | --- |
-| Teks beranda, poin kepercayaan, langkah "Cara beli", interval polling | `config/site.ts` |
-| Warna utama, warna terang/gelap | `app/globals.css` (`--color-brand-*`, `:root`, `[data-theme='dark']`) |
-| Font | `app/layout.tsx` (isi) dan `.font-display` di `app/globals.css` (judul) |
-| Bentuk tombol, kartu, field, pilihan | `components/ui/` |
-| Susunan bagian beranda | `app/page.tsx` |
-| Pesan galat untuk pembeli | `lib/errors.ts` |
+| Home page text, assurances, "How to buy" steps, polling interval | `config/site.ts` |
+| Brand color, light/dark colors | `app/globals.css` (`--color-brand-*`, `:root`, `[data-theme='dark']`) |
+| Fonts | `app/layout.tsx` (body) and `.font-display` in `app/globals.css` (headings) |
+| Shape of buttons, cards, fields, choices | `components/ui/` |
+| Order of the home page sections | `app/page.tsx` |
+| Error messages shown to buyers | `lib/errors.ts` |
 
-## Struktur
+## Structure
 
 ```
-app/                      rute (tipis: ambil data, susun komponen)
-  page.tsx                beranda + katalog (cache 300 detik)
-  produk/[slug]/          detail produk
-  checkout/               halaman + server action (quote, buat order)
-  pesanan/[ref]/          status pesanan + server action (kode bayar baru)
-  api/pesanan/[ref]/      route status yang di-polling browser
+app/                      routes (thin: fetch data, compose components)
+  page.tsx                home page + catalog (cached for 300 seconds)
+  produk/[slug]/          product detail
+  checkout/               page + server actions (quote, create order)
+  pesanan/[ref]/          order status + server action (new payment code)
+  api/pesanan/[ref]/      status route polled by the browser
 components/
-  ui/                     komponen dasar (Button, Card, Field, ChoiceList, …)
-  layout/                 header, footer, tema, pil keranjang
-  home/ catalog/ product/ checkout/ order/   satu folder per fitur
-config/site.ts            pengaturan toko
+  ui/                     base components (Button, Card, Field, ChoiceList, …)
+  layout/                 header, footer, theme, cart pill
+  home/ catalog/ product/ checkout/ order/   one folder per feature
+config/site.ts            store settings
 lib/
-  orderhero.ts            SATU-SATUNYA berkas yang memanggil API (server-only)
-  catalog.ts              produk API → data tampilan
-  order-public.ts         satu-satunya pintu data order ke browser (tanpa data pembeli)
-  order-status.ts         aturan lunas / tertutup / kedaluwarsa
-  cart.ts                 keranjang di localStorage (tanpa harga)
-  validation.ts           validasi pembeli (dipakai browser dan server)
+  orderhero.ts            the ONLY file that calls the API (server-only)
+  catalog.ts              API products → display data
+  order-public.ts         the only gateway for order data to the browser (no buyer data)
+  order-status.ts         paid / closed / expired rules
+  cart.ts                 cart in localStorage (no prices)
+  validation.ts           buyer validation (used by browser and server)
 ```
 
-## Aturan yang dijaga kode ini
+Route paths are in Indonesian (`/produk` = product, `/pesanan` = order); rename the folders under `app/` to change them.
 
-- Kunci secret hanya dibaca di `lib/orderhero.ts`; tidak pernah masuk bundle browser.
-- Harga tidak pernah dihitung atau dikirim dari browser; total selalu dari `POST /checkout/quote`.
-- Metode bayar dari `GET /checkout/payment-methods`, label dan urutan apa adanya.
-- Satu percobaan checkout = satu `Idempotency-Key` + satu `external_reference` (sessionStorage);
-  bila hasil tidak pasti, order dibaca ulang, bukan dibuat lagi.
-- Kode bayar (QRIS, VA, gerai) dan rekening transfer manual ditampilkan di `/pesanan/{ref}`; status di-polling tiap 10 detik.
-- Bukti transfer diteruskan langsung ke OrderHero; toko ini tidak menyimpan berkas.
-- Route status hanya mengirim field di `lib/order-public.ts`; data pembeli tidak pernah ke browser.
-- Alamat toko untuk `status_url` diambil dari env/Vercel, bukan dari header permintaan.
+## Rules this code enforces
 
-Fitur API yang dipakai bisa dicek di `GET /meta` → `data.features`.
+- The secret key is read only in `lib/orderhero.ts`; it never reaches the browser bundle.
+- Prices are never calculated or sent from the browser; totals always come from `POST /checkout/quote`.
+- Payment methods come from `GET /checkout/payment-methods`, with labels and order as returned.
+- One checkout attempt = one `Idempotency-Key` + one `external_reference` (sessionStorage);
+  when the outcome is uncertain, the order is read back, not created again.
+- Payment codes (QRIS, VA, retail outlet) and manual transfer accounts are shown on `/pesanan/{ref}`; status is polled every 10 seconds.
+- Proof of transfer is forwarded straight to OrderHero; this store does not keep any files.
+- The status route only sends the fields in `lib/order-public.ts`; buyer data never reaches the browser.
+- The store address for `status_url` comes from env/Vercel, not from request headers.
+
+The API features in use can be checked at `GET /meta` → `data.features`.
+
+## License
+
+[MIT](LICENSE)

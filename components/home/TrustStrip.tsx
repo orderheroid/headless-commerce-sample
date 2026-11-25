@@ -1,7 +1,7 @@
 import { site } from '@/config/site'
 import { Icon } from '@/components/ui'
 
-/** Poin kepercayaan dari config/site.ts: baris geser di HP, tiga kolom di layar lebar. */
+/** Trust points from config/site.ts: a scrolling row on mobile, three columns on wide screens. */
 export function TrustStrip() {
   return (
     <ul className="scroll-row -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-3 sm:px-0">

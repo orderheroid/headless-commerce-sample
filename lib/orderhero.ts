@@ -3,12 +3,12 @@ import 'server-only'
 import { buyerMessage } from './errors'
 import type { CartLine, Failure, OrderResult, PaymentMethods, Pagination, Product, Quote } from './types'
 
-// Satu-satunya berkas yang berbicara dengan OrderHero. Kunci secret hanya dibaca di sini,
-// di server; tidak ada yang mengimpor berkas ini dari kode browser ('server-only' menjaganya).
+// The only file that talks to OrderHero. The secret key is read only here,
+// on the server; nothing imports this file from browser code ('server-only' enforces it).
 
 const DEFAULT_BASE_URL = 'https://api.orderhero.id/v1'
 
-/** Base URL dari env ORDERHERO_API_URL (server saja). Wajib https, karena kunci secret ikut terkirim. */
+/** Base URL from env ORDERHERO_API_URL (server only). Must be https, because the secret key is sent with it. */
 function baseUrl(): string {
   const raw = process.env.ORDERHERO_API_URL?.trim()
   if (!raw) return DEFAULT_BASE_URL
@@ -16,10 +16,10 @@ function baseUrl(): string {
   try {
     url = new URL(raw)
   } catch {
-    throw new OrderHeroError(500, 'CONFIG_MISSING', 'ORDERHERO_API_URL bukan URL yang valid')
+    throw new OrderHeroError(500, 'CONFIG_MISSING', 'ORDERHERO_API_URL is not a valid URL')
   }
   if (url.protocol !== 'https:' || url.username || url.password) {
-    throw new OrderHeroError(500, 'CONFIG_MISSING', 'ORDERHERO_API_URL harus https dan tanpa kredensial')
+    throw new OrderHeroError(500, 'CONFIG_MISSING', 'ORDERHERO_API_URL must be https and without credentials')
   }
   return url.toString().replace(/\/+$/, '')
 }
@@ -29,9 +29,9 @@ export class OrderHeroError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
-    /** detik, dari header Retry-After */
+    /** seconds, from the Retry-After header */
     readonly retryAfter?: number,
-    /** field tambahan di body error, mis. `available`, `available_codes`, `order_id` */
+    /** extra fields in the error body, e.g. `available`, `available_codes`, `order_id` */
     readonly extra: Record<string, unknown> = {},
   ) {
     super(message)
@@ -39,7 +39,7 @@ export class OrderHeroError extends Error {
   }
 }
 
-/** Ubah error apa pun menjadi bentuk yang aman dikirim ke browser, dengan pesan untuk pembeli. */
+/** Turn any error into a shape that is safe to send to the browser, with a message for the buyer. */
 export function toFailure(err: unknown): Failure {
   if (err instanceof OrderHeroError) {
     return {
@@ -49,7 +49,7 @@ export function toFailure(err: unknown): Failure {
       ...(err.retryAfter ? { retryAfter: err.retryAfter } : {}),
     }
   }
-  console.error('[orderhero] error tak terduga', err)
+  console.error('[orderhero] unexpected error', err)
   return { ok: false, code: 'INTERNAL_ERROR', message: buyerMessage('INTERNAL_ERROR') }
 }
 
@@ -66,7 +66,7 @@ type RequestOptions = {
   method?: 'GET' | 'POST'
   body?: unknown
   idempotencyKey?: string
-  /** detik; tanpa ini respons tidak di-cache */
+  /** seconds; without this the response is not cached */
   revalidate?: number
   tags?: string[]
   timeoutMs?: number
@@ -77,9 +77,9 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const key = process.env.ORDERHERO_SECRET_KEY
 
   if (!key) {
-    throw new OrderHeroError(500, 'CONFIG_MISSING', 'ORDERHERO_SECRET_KEY belum diisi')
+    throw new OrderHeroError(500, 'CONFIG_MISSING', 'ORDERHERO_SECRET_KEY is not set')
   }
-  const url = baseUrl() + path // dicek di luar try: salah konfigurasi bukan error jaringan
+  const url = baseUrl() + path // checked outside the try: a misconfiguration is not a network error
   let res: Response
   try {
     res = await fetch(url, {
@@ -87,19 +87,19 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
       headers: {
         Authorization: `Bearer ${key}`,
         Accept: 'application/json',
-        // FormData: Content-Type (dengan boundary) diisi otomatis oleh fetch.
+        // FormData: Content-Type (with boundary) is set automatically by fetch.
         ...(body !== undefined && !(body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
         ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
       },
       body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
       signal: AbortSignal.timeout(timeoutMs),
-      // Next.js 16: cache fetch bersifat opt-in. Hanya baca yang aman di-cache; quote dan order selalu segar.
+      // Next.js 16: fetch caching is opt-in. Only safe reads are cached; quotes and orders are always fresh.
       ...(revalidate && method === 'GET'
         ? { cache: 'force-cache' as const, next: { revalidate, ...(tags ? { tags } : {}) } }
         : { cache: 'no-store' as const }),
     })
   } catch {
-    throw new OrderHeroError(0, 'NETWORK_ERROR', `Gagal menghubungi OrderHero (${method} ${path})`)
+    throw new OrderHeroError(0, 'NETWORK_ERROR', `Failed to reach OrderHero (${method} ${path})`)
   }
   const status = res.status
   const retryAfter = parseRetryAfter(res.headers.get('retry-after'))
@@ -119,14 +119,14 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   throw new OrderHeroError(status, code, typeof message === 'string' ? message : code, retryAfter, extra)
 }
 
-// ---------------------------------------------------------------- meta & katalog
+// ---------------------------------------------------------------- meta & catalog
 
 export async function getStoreName(): Promise<string | null> {
   const data = await request<{ workspace?: { store_name?: string | null } }>('/meta', { revalidate: 3600 })
   return data.workspace?.store_name ?? null
 }
 
-/** Semua produk digital yang aktif. Di-cache 300 detik. */
+/** All active digital products. Cached for 300 seconds. */
 export async function listDigitalProducts(): Promise<Product[]> {
   const products: Product[] = []
   for (let page = 1; page <= 10; page++) {
@@ -140,7 +140,7 @@ export async function listDigitalProducts(): Promise<Product[]> {
   return products
 }
 
-/** Menerima `id` atau `slug`. Mengembalikan null bila produk tidak ada atau non-aktif. */
+/** Accepts `id` or `slug`. Returns null if the product does not exist or is inactive. */
 export async function getProduct(idOrSlug: string): Promise<Product | null> {
   try {
     const data = await request<{ product: Product }>(`/catalog/products/${encodeURIComponent(idOrSlug)}`, {
@@ -163,11 +163,11 @@ export type QuoteInput = {
   items: CartLine[]
   payment_method?: string
   coupon_code?: string
-  /** Kunci secret: IP pembeli, hanya untuk batas per pembeli (60 quote/menit per IP). */
+  /** Secret key: buyer IP, only for the per-buyer limit (60 quotes/minute per IP). */
   tracking?: { client_ip?: string }
 }
 
-/** Total selalu dari sini. Body tidak pernah memuat field harga. */
+/** The total always comes from here. The body never contains price fields. */
 export async function getQuote(input: QuoteInput): Promise<Quote> {
   return request<Quote>('/checkout/quote', { method: 'POST', body: input })
 }
@@ -181,11 +181,11 @@ export type CreateOrderInput = {
   coupon_code?: string
   external_reference: string
   return_url: string
-  /** Halaman status toko ini; semua tautan bayar di WA/email OrderHero mengarah ke sini. */
+  /** This store's status page; every payment link in OrderHero's WA/email points here. */
   status_url: string
-  /** IP dan user agent pembeli (kunci secret: koneksi ke API selalu dari server toko). */
+  /** Buyer IP and user agent (secret key: connections to the API always come from the store server). */
   tracking?: { client_ip?: string; client_user_agent?: string }
-  /** Berapa lama order belum dibayar tetap terbuka (15–1.440, bawaan 1.440). Lebih pendek = stok cepat kembali. */
+  /** How long an unpaid order stays open (15–1,440, default 1,440). Shorter = stock is released sooner. */
   expires_in_minutes?: number
 }
 
@@ -198,12 +198,12 @@ export async function createOrder(input: CreateOrderInput, idempotencyKey: strin
   })
 }
 
-/** Tag cache order; dibersihkan (updateTag) setelah kode bayar dibuat ulang supaya tidak tampil kode lama. */
+/** Order cache tag; cleared (updateTag) after the payment code is regenerated so the old code is not shown. */
 export function orderCacheTag(ref: string): string {
   return `order:${ref}`
 }
 
-/** `ref` = external_reference. `revalidate` (detik) dipakai polling status supaya hemat kuota baca. */
+/** `ref` = external_reference. `revalidate` (seconds) is used by status polling to save read quota. */
 export async function getOrder(ref: string, options: { revalidate?: number } = {}): Promise<OrderResult> {
   return request<OrderResult>(`/orders/${encodeURIComponent(ref)}`, {
     revalidate: options.revalidate,
@@ -212,11 +212,11 @@ export async function getOrder(ref: string, options: { revalidate?: number } = {
 }
 
 /**
- * Buat kode bayar baru (kode lama kedaluwarsa, atau pembeli ganti metode).
- * Ganti metode = total dihitung ulang server; tampilkan `order.amounts.total` dari respons ini.
+ * Create a new payment code (the old code expired, or the buyer changed method).
+ * Changing method = the server recalculates the total; show `order.amounts.total` from this response.
  *
- * `idempotencyKey` satu per percobaan (satu klik): retry dengan kunci dan body yang sama mengembalikan
- * respons pertama, bukan kode kedua. `reuseExisting` hanya cadangan bila hasil percobaan tidak diketahui.
+ * One `idempotencyKey` per attempt (one click): a retry with the same key and body returns the
+ * first response, not a second code. `reuseExisting` is only a fallback when the attempt's outcome is unknown.
  */
 export async function createPayment(
   ref: string,
@@ -232,9 +232,9 @@ export async function createPayment(
 }
 
 /**
- * "Saya sudah transfer" untuk order transfer manual. Bukti (opsional) diteruskan langsung ke OrderHero
- * sebagai multipart; toko ini tidak menyimpan berkas apa pun. Merchant memverifikasinya di dashboard
- * (Finance → Konfirmasi Pembayaran), lalu order menjadi lunas.
+ * "I've made the transfer" for manual transfer orders. The proof (optional) is forwarded straight to OrderHero
+ * as multipart; this store does not store any files. The merchant verifies it in the dashboard
+ * (Finance → Konfirmasi Pembayaran), then the order becomes paid.
  */
 export async function confirmTransfer(ref: string, input: { senderName: string; proofFile?: File | null }): Promise<void> {
   const form = new FormData()
