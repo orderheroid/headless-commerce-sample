@@ -26,6 +26,8 @@ export type Product = {
   price: number
   compare_price: number | null
   currency: string
+  /** On sale = `active` or `published`. A secret key can also read drafts by id or slug. */
+  status?: string
   is_digital: boolean
   is_featured: boolean
   shipping_required: boolean

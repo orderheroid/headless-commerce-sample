@@ -140,12 +140,18 @@ export async function listDigitalProducts(): Promise<Product[]> {
   return products
 }
 
-/** Accepts `id` or `slug`. Returns null if the product does not exist or is inactive. */
+const ON_SALE = new Set(['active', 'published'])
+
+/**
+ * Accepts `id` or `slug`. Returns null if the product does not exist or is not on sale.
+ * A secret key can read a product in any status (drafts included), so the status is checked here.
+ */
 export async function getProduct(idOrSlug: string): Promise<Product | null> {
   try {
     const data = await request<{ product: Product }>(`/catalog/products/${encodeURIComponent(idOrSlug)}`, {
       revalidate: 300,
     })
+    if (data.product.status && !ON_SALE.has(data.product.status)) return null
     return data.product
   } catch (err) {
     if (err instanceof OrderHeroError && err.status === 404) return null
