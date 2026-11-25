@@ -29,7 +29,7 @@ export type VariantOption = { id: string; name: string; price: number | null; co
 export type ProductDetail = ProductSummary & {
   images: { url: string; alt: string }[]
   variants: VariantOption[]
-  /** Stok tingkat produk (aturan 8); null = stok tidak dihitung */
+  /** Stok tingkat produk; null = stok tidak dihitung */
   stock: number | null
   descriptionHtml: string
   pwyw: { minPrice: number; suggestedPrice: number | null } | null

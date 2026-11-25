@@ -6,7 +6,7 @@ import { headers } from 'next/headers'
 
 // IP dan user agent pembeli untuk `tracking.client_ip` / `tracking.client_user_agent` di POST /orders.
 // Kunci secret membuat semua order datang dari IP server toko, jadi OrderHero butuh IP pembeli untuk
-// batas per IP (usulan anti penyalahgunaan) dan untuk pencocokan pixel iklan.
+// batas per IP dan untuk pencocokan pixel iklan.
 //
 // Sumber IP hanya header yang diisi platform hosting: di Vercel, `x-real-ip` dan `x-forwarded-for`
 // ditulis ulang oleh proxy Vercel. IP lokal/privat (pengembangan) tidak dikirim.

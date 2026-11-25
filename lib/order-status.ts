@@ -4,11 +4,11 @@
 /** `status` atau `payment_status` bernilai ini = order tertutup, polling berhenti. */
 export const CLOSED_VALUES = ['cancelled', 'canceled', 'expired', 'failed', 'refunded', 'returned', 'deleted']
 
-/** Order headless belum punya `expires_at`; cron menutupnya `created_at` + 24 jam. */
+/** Cadangan bila order tidak membawa `expires_at`: order ditutup `created_at` + 24 jam. */
 export const ORDER_LIFETIME_MS = 24 * 60 * 60_000
 
 /**
- * Sejak 25 Nov 2026 OrderHero membatasi masa berlaku kode bayar sampai tenggat order, dan menolak kode baru
+ * OrderHero membatasi masa berlaku kode bayar sampai tenggat order, dan menolak kode baru
  * bila sisa waktunya kurang dari 5 menit (`409 ORDER_CLOSED`). Toko mengikuti batas yang sama.
  */
 export const NO_NEW_CODE_BEFORE_CLOSE_MS = 5 * 60_000

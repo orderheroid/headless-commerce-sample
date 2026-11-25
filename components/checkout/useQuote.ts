@@ -16,7 +16,7 @@ type Options = {
 }
 
 /**
- * Total checkout dari POST /checkout/quote (aturan 2). Dihitung ulang dengan jeda setiap keranjang,
+ * Total checkout dari POST /checkout/quote. Dihitung ulang dengan jeda setiap keranjang,
  * kupon, atau metode bayar berubah. Jawaban lama yang datang terlambat diabaikan.
  */
 export function useQuote({ enabled, lines, paymentMethod, couponCode, onCouponRejected }: Options) {

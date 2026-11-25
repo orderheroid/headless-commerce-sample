@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 import { ButtonLink, Icon, Notice, Skeleton } from '@/components/ui'
 
-/** QR dirender dari `qris_payload` di browser (qris_image_url tidak pernah terisi di data nyata). */
+/** QR dirender dari `qris_payload` di browser. */
 export function QrisCode({ payload, fileName = 'qris.png' }: { payload: string; fileName?: string }) {
   const [src, setSrc] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)

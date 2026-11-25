@@ -3,7 +3,7 @@
 import { Card, CardHeader, ChoiceList } from '@/components/ui'
 import type { PaymentMethod } from '@/lib/types'
 
-/** Metode bayar dari GET /checkout/payment-methods: `label` dan urutan apa adanya (aturan 3). */
+/** Metode bayar dari GET /checkout/payment-methods: `label` dan urutan apa adanya. */
 export function PaymentSection({
   methods,
   value,

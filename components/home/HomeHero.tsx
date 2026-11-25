@@ -8,7 +8,7 @@ import { cn } from '@/lib/cn'
 /** Posisi tiga sampul yang "berkipas": kiri miring, tengah di depan, kanan miring. */
 const FAN = ['-rotate-[8deg] translate-x-5 translate-y-3', 'z-10 -translate-y-1 scale-105', 'rotate-[8deg] -translate-x-5 translate-y-3']
 
-/** Pembuka beranda: judul serif besar, ajakan, dan tumpukan sampul produk. */
+/** Pembuka beranda: judul besar, ajakan, dan tumpukan sampul produk. */
 export function HomeHero({ storeName, showcase, productCount }: { storeName: string; showcase: ProductSummary[]; productCount: number }) {
   const covers = showcase.filter((p) => p.image).slice(0, 3)
 

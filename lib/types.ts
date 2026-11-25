@@ -111,7 +111,7 @@ export type Order = {
   delivery?: { status: DeliveryStatus } | null
   paid_at?: string | null
   created_at?: string | null
-  /** Tenggat order (created_at + 24 jam), ada sejak 25 Nov 2026; `null` untuk order gratis dan order lama. */
+  /** Tenggat order (created_at + 24 jam); `null` untuk order gratis dan order lama. */
   expires_at?: string | null
   // `customer` sengaja tidak diberi tipe: data pembeli tidak pernah dipakai atau diteruskan.
 }
@@ -182,7 +182,7 @@ export type PublicPayment = {
   expires_at: string | null
 }
 
-/** Satu-satunya data order yang boleh sampai ke browser (aturan 7, diperluas dengan kode bayar). */
+/** Satu-satunya data order yang boleh sampai ke browser. */
 export type PublicOrderStatus = {
   order_number: string | null
   status: string

@@ -10,7 +10,7 @@ import type { CartLine, CreateOrderResult, Failure, OrderResult, QuoteResult } f
 import { cleanBuyer, validateBuyer } from '@/lib/validation'
 
 // Server action dipanggil dari browser, jadi semua input diperiksa ulang di sini.
-// Tidak ada field harga yang diterima maupun dikirim ke API (aturan 2).
+// Tidak ada field harga yang diterima maupun dikirim ke API.
 
 const fail = (code: string, message = buyerMessage(code)): Failure => ({ ok: false, code, message })
 
@@ -143,7 +143,7 @@ export async function createOrderAction(input: {
   } catch (err) {
     if (!(err instanceof OrderHeroError)) return toFailure(err)
 
-    // Order mungkin sudah dibuat: baca yang ada lewat external_reference, jangan buat baru (aturan 4).
+    // Order mungkin sudah dibuat: baca yang ada lewat external_reference, jangan buat baru.
     if (['DUPLICATE_REFERENCE', 'IDEMPOTENCY_OUTCOME_UNKNOWN', 'IDEMPOTENCY_KEY_REUSED'].includes(err.code)) {
       let existing: OrderResult | null
       try {

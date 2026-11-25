@@ -8,7 +8,7 @@ import type { PublicOrderStatus } from '@/lib/types'
 
 type Fetched = { kind: 'ok'; order: PublicOrderStatus } | { kind: 'error'; message: string; notFound: boolean; retryAfter?: number }
 
-/** Baca status lewat route handler milik toko ini (aturan 6), bukan langsung ke OrderHero. */
+/** Baca status lewat route handler milik toko ini, bukan langsung ke OrderHero. */
 async function fetchStatus(reference: string): Promise<Fetched> {
   try {
     const res = await fetch(`/api/pesanan/${reference}`, { cache: 'no-store' })

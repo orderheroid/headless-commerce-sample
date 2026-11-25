@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from 'react'
 
 import { newUuid } from '@/lib/format'
 
-// Satu "percobaan checkout" = dua UUID di sessionStorage (aturan 4):
+// Satu "percobaan checkout" = dua UUID di sessionStorage:
 // - Idempotency-Key  : dipakai ulang di setiap retry POST /orders
 // - external_reference: id order di toko ini, juga ref halaman /pesanan/{ref}
 // Keduanya baru diganti setelah order berhasil dibuat.

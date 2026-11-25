@@ -45,7 +45,7 @@ export const site = {
 } as const
 
 export const checkoutConfig = {
-  /** Jeda sebelum total dihitung ulang setelah keranjang/kupon/metode berubah (aturan: ±400 ms). */
+  /** Jeda sebelum total dihitung ulang setelah keranjang/kupon/metode berubah (disarankan ±400 ms). */
   quoteDebounceMs: 400,
   /**
    * Keranjang berisi produk yang stoknya dihitung: order belum dibayar ditutup setelah sekian menit
@@ -58,7 +58,7 @@ export const orderStatusConfig = {
   /** Batas ukuran bukti transfer manual. Di bawah batas body Vercel (4,5 MB); API menerima sampai 5 MB. */
   proofMaxBytes: 4 * 1024 * 1024,
   proofTypes: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
-  /** Interval polling halaman status (aturan: 5–10 detik). */
+  /** Interval polling halaman status (disarankan 5–10 detik). */
   pollMs: 10_000,
   /** Setelah ini polling berhenti dan diganti tombol "Periksa status". */
   maxPollMs: 30 * 60_000,

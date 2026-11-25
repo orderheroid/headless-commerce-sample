@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 export default async function CheckoutPage() {
   let methods: PaymentMethods
   try {
-    // Daftar dan urutannya apa adanya dari API (aturan 3); di-cache 60 detik di server.
+    // Daftar dan urutannya apa adanya dari API; di-cache 60 detik di server.
     methods = await getPaymentMethods()
   } catch (err) {
     return <Notice title="Checkout belum bisa dibuka">{toFailure(err).message}</Notice>

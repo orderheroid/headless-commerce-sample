@@ -3,7 +3,7 @@ import 'server-only'
 import sanitizeHtml from 'sanitize-html'
 
 // Teks produk datang dari merchant. `description` adalah HTML (lihat OpenAPI); `short_description`
-// di data nyata juga sering berisi HTML dan entitas (`<p>`, `&amp;`).
+// juga sering berisi HTML dan entitas (`<p>`, `&amp;`).
 
 /** HTML deskripsi yang aman dirender dengan dangerouslySetInnerHTML. */
 export function sanitizeDescription(html: string | null): string {
