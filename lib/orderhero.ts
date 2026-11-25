@@ -234,7 +234,7 @@ export async function createPayment(
 /**
  * "I've made the transfer" for manual transfer orders. The proof (optional) is forwarded straight to OrderHero
  * as multipart; this store does not store any files. The merchant verifies it in the dashboard
- * (Finance → Konfirmasi Pembayaran), then the order becomes paid.
+ * (the payment confirmations page under Finance), then the order becomes paid.
  */
 export async function confirmTransfer(ref: string, input: { senderName: string; proofFile?: File | null }): Promise<void> {
   const form = new FormData()

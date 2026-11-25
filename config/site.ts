@@ -4,7 +4,7 @@
 // =============================================================================
 
 export const site = {
-  /** Used when GET /meta has no `store_name` yet (fill in Profil Bisnis in the OrderHero dashboard). */
+  /** Used when GET /meta has no `store_name` yet (set the business profile in the OrderHero dashboard). */
   fallbackName: 'Digital Store',
   /** Number and date format. */
   locale: 'id-ID',

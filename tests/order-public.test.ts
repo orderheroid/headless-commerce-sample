@@ -13,7 +13,7 @@ function apiResult(overrides: Record<string, unknown> = {}): OrderResult {
       status: 'pending',
       payment_status: 'pending',
       payment_method: 'QRIS',
-      customer: { name: 'Budi Rahasia', email: 'budi@rahasia.com', phone: '6281200000000', address: 'Jl. Rahasia 1' },
+      customer: { name: 'Secret Buyer', email: 'buyer@secret.example', phone: '6281200000000', address: '1 Secret Street' },
       items: [{ product_name: 'E-book', variant_name: null, quantity: 1, price: 50000, subtotal: 50000 }],
       amounts: { currency: 'IDR', total: 50000 },
       created_at: '2026-11-25T00:00:00.000Z',
@@ -29,7 +29,7 @@ function apiResult(overrides: Record<string, unknown> = {}): OrderResult {
 describe('toPublicStatus', () => {
   it('never passes on buyer data', () => {
     const json = JSON.stringify(toPublicStatus(apiResult()))
-    for (const secret of ['Budi Rahasia', 'budi@rahasia.com', '6281200000000', 'Jl. Rahasia', 'customer']) expect(json).not.toContain(secret)
+    for (const secret of ['Secret Buyer', 'buyer@secret.example', '6281200000000', 'Secret Street', 'customer']) expect(json).not.toContain(secret)
   })
   it('contains only the allowed fields', () => {
     expect(Object.keys(toPublicStatus(apiResult())).sort()).toEqual(
@@ -43,13 +43,13 @@ describe('toPublicStatus', () => {
     const result = {
       ...apiResult({ payment_method: 'm_abc', amounts: { currency: 'IDR', total: 50123, unique_code: 123 } }),
       payment: null,
-      transfer_confirmation: { id: 't1', status: 'rejected', sender_name: 'Budi Rahasia', proof_url: 'https://cdn.example/bukti.jpg', amount: 50123, rejection_reason: 'Nominal tidak cocok' },
+      transfer_confirmation: { id: 't1', status: 'rejected', sender_name: 'Secret Buyer', proof_url: 'https://cdn.example/proof.jpg', amount: 50123, rejection_reason: 'Amount does not match' },
     } as unknown as OrderResult
     const out = toPublicStatus(result)
-    expect(out.transfer).toEqual({ status: 'rejected', rejection_reason: 'Nominal tidak cocok' })
+    expect(out.transfer).toEqual({ status: 'rejected', rejection_reason: 'Amount does not match' })
     expect(out.unique_code).toBe(123)
     expect(out.total).toBe(50123)
-    expect(JSON.stringify(out)).not.toMatch(/Budi Rahasia|bukti\.jpg/)
+    expect(JSON.stringify(out)).not.toMatch(/Secret Buyer|proof\.jpg/)
   })
   it('without transfer confirmation: transfer is null and unique code is 0', () => {
     const out = toPublicStatus(apiResult())

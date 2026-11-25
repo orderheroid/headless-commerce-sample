@@ -16,13 +16,13 @@ describe('normalizePhone', () => {
 })
 
 describe('validateBuyer', () => {
-  const valid = { name: 'Budi Santoso', email: 'budi@mail.com', phone: '081234567890' }
+  const valid = { name: 'Jane Doe', email: 'jane@mail.com', phone: '081234567890' }
   it('passes for valid data', () => expect(validateBuyer(valid)).toEqual({}))
   it('flags each invalid field', () => {
     expect(Object.keys(validateBuyer({ name: ' ', email: 'x', phone: '1' }))).toEqual(['name', 'email', 'phone'])
   })
   it('cleanBuyer tidies up email and phone', () => {
-    expect(cleanBuyer({ ...valid, email: ' Budi@Mail.com ' })).toEqual({ name: 'Budi Santoso', email: 'budi@mail.com', phone: '6281234567890' })
-    expect(cleanBuyer({ ...valid, email: 'salah' })).toBeNull()
+    expect(cleanBuyer({ ...valid, email: ' Jane@Mail.com ' })).toEqual({ name: 'Jane Doe', email: 'jane@mail.com', phone: '6281234567890' })
+    expect(cleanBuyer({ ...valid, email: 'invalid' })).toBeNull()
   })
 })
