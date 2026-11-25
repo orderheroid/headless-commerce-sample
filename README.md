@@ -23,7 +23,7 @@ Requires Node 20.9 or newer.
 
 | Env | Required | Notes |
 | --- | --- | --- |
-| `ORDERHERO_SECRET_KEY` | yes | Secret key. The `catalog:read` + `checkout:write` scopes are enough. Server only. |
+| `ORDERHERO_SECRET_KEY` | yes | Secret key. Needs the `catalog:read`, `checkout:write` and `orders:read` scopes (the order status page reads `GET /orders/{ref}`); a key created in the dashboard has them all. Server only. |
 | `ORDERHERO_API_URL` | no | Defaults to `https://api.orderhero.id/v1`. Must be https. |
 | `SITE_URL` | outside Vercel | Store address (https). Used for the status links in OrderHero's WhatsApp/email messages. |
 
