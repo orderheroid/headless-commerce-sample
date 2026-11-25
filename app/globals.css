@@ -1,0 +1,253 @@
+@import 'tailwindcss';
+
+/*
+ * =============================================================================
+ * TEMA TOKO
+ * - Warna utama (tombol, tautan): skala --color-brand-* di @theme.
+ * - Warna terang/gelap: variabel di :root (terang) dan [data-theme='dark'] (gelap) di bawah.
+ *   Komponen hanya memakai nama semantik: bg-canvas, bg-surface, border-line, text-fg, text-accent, dst.
+ * - Font: app/layout.tsx (variabel --font-body).
+ * =============================================================================
+ */
+
+/* Varian `dark:` mengikuti atribut data-theme (diatur ThemeToggle), bukan media query. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  /* Huruf judul. Dipakai lewat class font-display; bawaan sama dengan isi (lihat app/layout.tsx). */
+  --font-display: var(--font-heading, var(--font-body)), ui-sans-serif, system-ui, sans-serif;
+
+  /* Biru utama toko. */
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #dfe6ff;
+  --color-brand-200: #c2cfff;
+  --color-brand-300: #9db1ff;
+  --color-brand-400: #7590ff;
+  --color-brand-500: #4a6cff;
+  --color-brand-600: #2f54eb;
+  --color-brand-700: #2443c8;
+  --color-brand-800: #1d369f;
+  --color-brand-900: #182b7a;
+
+  /* Aksen "stabilo" untuk penekanan kecil (garis bawah judul, label). */
+  --color-pop: #ffd84d;
+
+  /* Animasi dipakai lewat class animate-fade-in, animate-fade-up, animate-shimmer. */
+  --animate-fade-in: fade-in 300ms ease-out both;
+  --animate-fade-up: fade-up 400ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+/* Nama semantik → variabel yang berganti menurut tema. */
+@theme inline {
+  --color-canvas: var(--canvas); /* latar halaman */
+  --color-surface: var(--surface); /* kartu, header, input */
+  --color-subtle: var(--subtle); /* permukaan redup (kotak info, hover ringan) */
+  --color-muted: var(--muted); /* hover, latar gambar */
+  --color-line: var(--line); /* garis kartu */
+  --color-line-soft: var(--line-soft); /* pemisah di dalam kartu */
+  --color-line-strong: var(--line-strong); /* garis input dan tombol sekunder */
+  --color-fg: var(--fg); /* teks utama */
+  --color-fg-muted: var(--fg-muted); /* teks sekunder */
+  --color-fg-subtle: var(--fg-subtle); /* keterangan */
+  --color-fg-faint: var(--fg-faint); /* placeholder, nonaktif */
+
+  --color-accent: var(--accent); /* tautan dan angka penting */
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft); /* latar pilihan terpilih, info */
+  --color-accent-line: var(--accent-line);
+  --color-accent-faint: var(--accent-faint);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-line: var(--success-line);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+}
+
+:root {
+  color-scheme: light;
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --subtle: #f7f8fa;
+  --muted: #f1f3f5;
+  --line: #e6e8ec;
+  --line-soft: #f0f1f4;
+  --line-strong: #d3d7de;
+  --fg: #0d0f14;
+  --fg-muted: #444a55;
+  --fg-subtle: #6b7280;
+  --fg-faint: #a1a7b3;
+
+  --accent: #2443c8;
+  --accent-strong: #182b7a;
+  --accent-soft: #eef2ff;
+  --accent-line: #c2cfff;
+  --accent-faint: #9db1ff;
+
+  --success: #0b6b4f;
+  --success-soft: #e8f6ef;
+  --success-line: #a9dcc6;
+  --danger: #c62828;
+  --danger-soft: #fdeeee;
+  --danger-line: #f1a9a9;
+  --warning: #8a4b06;
+  --warning-soft: #fff6dc;
+
+  --shimmer-a: #eceef1;
+  --shimmer-b: #f7f8fa;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --canvas: #0b0c0f;
+  --surface: #131519;
+  --subtle: #0f1114;
+  --muted: #1b1e24;
+  --line: #24272e;
+  --line-soft: #1b1e24;
+  --line-strong: #363a44;
+  --fg: #f3f4f6;
+  --fg-muted: #c0c4cc;
+  --fg-subtle: #8e949f;
+  --fg-faint: #5c626d;
+
+  --accent: #9db1ff;
+  --accent-strong: #c9d4ff;
+  --accent-soft: rgb(74 108 255 / 0.16);
+  --accent-line: rgb(117 144 255 / 0.4);
+  --accent-faint: #3f4f96;
+
+  --success: #7fe0b8;
+  --success-soft: rgb(16 185 129 / 0.12);
+  --success-line: rgb(52 211 153 / 0.3);
+  --danger: #ffaaa5;
+  --danger-soft: rgb(239 68 68 / 0.12);
+  --danger-line: rgb(248 113 113 / 0.45);
+  --warning: #ffd84d;
+  --warning-soft: rgb(255 216 77 / 0.1);
+
+  --shimmer-a: #17191e;
+  --shimmer-b: #22252c;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--fg);
+}
+
+/* Hormati pengaturan "kurangi gerakan" di perangkat pembeli. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Latar shimmer untuk gambar yang sedang dimuat dan skeleton. */
+.shimmer {
+  background-image: linear-gradient(90deg, var(--shimmer-a) 0%, var(--shimmer-b) 50%, var(--shimmer-a) 100%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Gaya judul: tebal dan rapat. Ubah di sini bila memakai font judul lain (mis. serif: weight 400). */
+.font-display {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+/* Baris geser horizontal tanpa scrollbar (rak produk, chip kategori). */
+.scroll-row {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* Garis bawah stabilo di bawah kata yang ditekankan. */
+.marker {
+  font-style: normal;
+  background-image: linear-gradient(transparent 62%, var(--color-pop) 62%, var(--color-pop) 92%, transparent 92%);
+}
+[data-theme='dark'] .marker {
+  background-image: linear-gradient(transparent 62%, rgb(255 216 77 / 0.35) 62%, rgb(255 216 77 / 0.35) 92%, transparent 92%);
+}
+
+/* Deskripsi produk (HTML merchant yang sudah disanitasi). */
+.prose-toko {
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.prose-toko > * + * {
+  margin-top: 0.9em;
+}
+.prose-toko ul {
+  list-style: disc;
+  padding-left: 1.25em;
+}
+.prose-toko ol {
+  list-style: decimal;
+  padding-left: 1.25em;
+}
+.prose-toko li + li {
+  margin-top: 0.3em;
+}
+.prose-toko h2,
+.prose-toko h3,
+.prose-toko h4 {
+  margin-top: 1.4em;
+  font-weight: 600;
+  color: var(--fg);
+}
+.prose-toko a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.prose-toko img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+.prose-toko blockquote {
+  border-left: 3px solid var(--accent-line);
+  padding-left: 1em;
+  color: var(--fg-muted);
+}

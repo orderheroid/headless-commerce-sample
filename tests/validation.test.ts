@@ -1,0 +1,28 @@
+import { describe, expect, it } from 'vitest'
+
+import { cleanBuyer, normalizePhone, validateBuyer } from '@/lib/validation'
+
+describe('normalizePhone', () => {
+  it('mengubah berbagai bentuk nomor Indonesia menjadi 62…', () => {
+    expect(normalizePhone('0812-3456-7890')).toBe('6281234567890')
+    expect(normalizePhone('+62 812 3456 7890')).toBe('6281234567890')
+    expect(normalizePhone('81234567890')).toBe('6281234567890')
+  })
+  it('menolak nomor yang tidak masuk akal', () => {
+    expect(normalizePhone('12')).toBeNull()
+    expect(normalizePhone('021555123')).toBeNull()
+    expect(normalizePhone('')).toBeNull()
+  })
+})
+
+describe('validateBuyer', () => {
+  const valid = { name: 'Budi Santoso', email: 'budi@mail.com', phone: '081234567890' }
+  it('lolos untuk data yang benar', () => expect(validateBuyer(valid)).toEqual({}))
+  it('menandai tiap field yang salah', () => {
+    expect(Object.keys(validateBuyer({ name: ' ', email: 'x', phone: '1' }))).toEqual(['name', 'email', 'phone'])
+  })
+  it('cleanBuyer merapikan email dan telepon', () => {
+    expect(cleanBuyer({ ...valid, email: ' Budi@Mail.com ' })).toEqual({ name: 'Budi Santoso', email: 'budi@mail.com', phone: '6281234567890' })
+    expect(cleanBuyer({ ...valid, email: 'salah' })).toBeNull()
+  })
+})
