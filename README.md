@@ -1,5 +1,7 @@
 # OrderHero Headless Store (sample)
 
+![Headless Commerce Sample: a digital product storefront built on the OrderHero API](.github/social-preview.png)
+
 An online store for digital products with the **OrderHero Headless Commerce API v1** as its only backend.
 Next.js App Router, TypeScript, Tailwind v4. No database, no webhooks.
 
